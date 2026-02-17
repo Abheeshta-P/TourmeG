@@ -11,38 +11,60 @@ function MapClickHandler({ addMode }: MapViewProps) {
   const { defaultCrowd, defaultTime, defaultTasks } = useDefaultNode();
   const [nodes, setNodes] = useState([...mangaloreNodes]);
 
+  console.log(defaultTasks);
+
   useMapEvents({
-    click(e) {
+    async click(e) {
       if (!addMode) return;
 
+      const { lat, lng } = e.latlng;
+      let fetchedName = `New Node ${nodes.length + 1}`;
+
+      try {
+        // Optional: Fetch location name automatically
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
+        );
+        const data = await response.json();
+        fetchedName = data.display_name.split(',')[0] || fetchedName;
+      } catch (error) {
+        console.error("Geocoding failed", error);
+      }
+
       const newNode = {
-        id: nodes.length + 1,
-        name: `New Node ${nodes.length + 1}`,
-        position: [e.latlng.lat, e.latlng.lng] as [number, number],
+        id: Date.now(), // Use timestamp for unique IDs
+        name: fetchedName,
+        position: [lat, lng] as [number, number],
         type: "Custom",
         tasks: [...defaultTasks],
         crowd: defaultCrowd,
         time: defaultTime,
         effort: {},
-        nodeDifficulty:0
+        nodeDifficulty: 0
       };
-      setNodes([...nodes, newNode]);
+
+      setNodes((prev) => [...prev, newNode]);
     },
   });
+
+  // Function to let user update name manually in the popup
+  const updateNodeName = (id: number, newName: string) => {
+    setNodes(nodes.map(n => n.id === id ? { ...n, name: newName } : n));
+  };
 
   return (
     <>
       {nodes.map((node) => (
-        <Marker
-          key={node.id}
-          position={node.position as [number, number]}
-        >
-          <Popup>
+        <Marker key={node.id} position={node.position}>
+          <Popup key={`${node.id}-${node.tasks.join(',')}`}>
             <div>
-              <h4>{node.name}</h4>
-              <p>Crowd: {node.crowd}</p>
-              <p>Time: {node.time} min</p>
-              <p>Tasks: {node.tasks.join(", ")}</p>
+              <input
+                value={node.name}
+                onChange={(e) => updateNodeName(node.id, e.target.value)}
+                style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}
+              />
+              <p>Type: {node.type}</p>
+              <p>NodeDifficulty: {node.nodeDifficulty}</p>
             </div>
           </Popup>
         </Marker>
