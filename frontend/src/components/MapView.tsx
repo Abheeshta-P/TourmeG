@@ -1,7 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import { useState } from "react";
 import { useDefaultNode } from "../context/DefaultNodeContext";
-import { mangaloreNodes } from "../data/nodedata";
+import { mangaloreNodes, type Node } from "../data/nodedata";
 
 type MapViewProps = {
   addMode?: boolean;
@@ -11,20 +11,17 @@ function MapClickHandler({ addMode }: MapViewProps) {
   const { defaultCrowd, defaultTime, defaultTasks } = useDefaultNode();
   const [nodes, setNodes] = useState([...mangaloreNodes]);
 
-  console.log(defaultTasks);
+  // State to track which node we are currently "configuring"
+  const [editingNode, setEditingNode] = useState<Node | null>(null);
 
   useMapEvents({
     async click(e) {
       if (!addMode) return;
-
       const { lat, lng } = e.latlng;
       let fetchedName = `New Node ${nodes.length + 1}`;
 
       try {
-        // Optional: Fetch location name automatically
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`
-        );
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
         const data = await response.json();
         fetchedName = data.display_name.split(',')[0] || fetchedName;
       } catch (error) {
@@ -32,7 +29,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
       }
 
       const newNode = {
-        id: Date.now(), // Use timestamp for unique IDs
+        id: Date.now(),
         name: fetchedName,
         position: [lat, lng] as [number, number],
         type: "Custom",
@@ -47,9 +44,13 @@ function MapClickHandler({ addMode }: MapViewProps) {
     },
   });
 
-  // Function to let user update name manually in the popup
   const updateNodeName = (id: number, newName: string) => {
     setNodes(nodes.map(n => n.id === id ? { ...n, name: newName } : n));
+  };
+
+  // DELETE function
+  const deleteNode = (id: number) => {
+    setNodes(nodes.filter(n => n.id !== id));
   };
 
   return (
@@ -57,18 +58,61 @@ function MapClickHandler({ addMode }: MapViewProps) {
       {nodes.map((node) => (
         <Marker key={node.id} position={node.position}>
           <Popup key={`${node.id}-${node.tasks.join(',')}`}>
-            <div>
+            <div style={{ minWidth: '150px' }}>
               <input
                 value={node.name}
                 onChange={(e) => updateNodeName(node.id, e.target.value)}
-                style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block' }}
+                style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block', width: '100%' }}
               />
-              <p>Type: {node.type}</p>
-              <p>NodeDifficulty: {node.nodeDifficulty}</p>
+              <p style={{ margin: '2px 0' }}>Type: {node.type}</p>
+              <p style={{ margin: '2px 0' }}>Difficulty: {node.nodeDifficulty}</p>
+
+              <hr style={{ margin: '8px 0' }} />
+
+              {/* BUTTONS SECTION */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
+                <button
+                  onClick={() => setEditingNode(node)}
+                  style={{ cursor: 'pointer', padding: '2px 5px' }}
+                >
+                  ⚙️ Config
+                </button>
+                <button
+                  onClick={() => deleteNode(node.id)}
+                  style={{ cursor: 'pointer', padding: '2px 5px', color: 'red' }}
+                >
+                  🗑️ Delete
+                </button>
+              </div>
             </div>
           </Popup>
         </Marker>
       ))}
+
+      {/* Basic Modal for Config */}
+      {editingNode && (
+        <div style={{
+          position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+          backgroundColor: 'white', padding: '20px', zIndex: 1000, borderRadius: '8px',
+          boxShadow: '0 0 10px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', gap: '10px'
+        }}>
+          <h3>Config: {editingNode.name}</h3>
+          <label>Difficulty:
+            <input
+              type="number"
+              value={editingNode.nodeDifficulty}
+              onChange={(e) => setEditingNode({ ...editingNode, nodeDifficulty: Number(e.target.value) })}
+            />
+          </label>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button onClick={() => {
+              setNodes(nodes.map(n => n.id === editingNode.id ? editingNode : n));
+              setEditingNode(null);
+            }}>Save</button>
+            <button onClick={() => setEditingNode(null)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
