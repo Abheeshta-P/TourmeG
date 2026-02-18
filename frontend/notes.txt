@@ -16,16 +16,16 @@ kudroli: 12.876278548787308, 74.83133376172098
 Done: 
 - the algorithm is selected (TSP+A*)
 - configuration all done
+- automatically on task input update node difficulty -> on fly calculation for simplicity
+- the configuration seperation is not yet done: needs to change node type uses
 
 Pending:
-- the configuration seperation is not yet done: needs to change node type uses
-- automatically on task input update node difficulty
 - not persistent
 - storage delimmna (Local storage)
 - did not use tasks cost into anywhere 
 - the given lang and lat is wrong
 - no actual road values for path
-
+- issue with nodedifficulty
 
  setEditingNode({
   ...node,

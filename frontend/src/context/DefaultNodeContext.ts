@@ -3,11 +3,9 @@ import { createContext, useContext } from "react";
 type DefaultNodeContextType = {
   defaultTasks: string[];
   defaultTaskEffort: { [task: string]: number }; // effort for each task
-  defaultNodeDifficulty: number;
   
   setDefaultTasks: (tasks: string[]) => void;
   setDefaultTaskEffort: (effort: { [task: string]: number }) => void;
-  setDefaultNodeDifficulty: (totalEffort: number) => void;
 };
 
 

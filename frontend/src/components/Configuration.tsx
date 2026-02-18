@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useDefaultNode } from "../context/DefaultNodeContext";
 import { taskOptions } from "../data/tasksdata";
 
@@ -18,20 +17,7 @@ export default function Configuration({
   // If props exist (Modal mode), use them. If not (Sidebar mode), use context.
   const currentTasks = tasks ?? context.defaultTasks;
   const currentEffort = effort ?? context.defaultTaskEffort;
-
-  // Compute nodeDifficulty automatically whenever tasks/effort changes
-  useEffect(() => {
-    const totalDifficulty = Object.values(currentEffort).reduce((sum, val) => sum + val, 0);
-
-
-    if (onchange) {
-      // If editing a node directly, update it via onChange
-      onChange?.(currentTasks, currentEffort, totalDifficulty);
-    } else {
-      // Else, update global defaults
-      context.setDefaultNodeDifficulty?.(totalDifficulty); // optional if you store global nodeDifficulty
-    }
-  }, [currentEffort, currentTasks]);
+ 
 
   const toggleTask = (task: string) => {
     let newTasks: string[];

@@ -5,13 +5,14 @@ import {toast} from "sonner";
 import { mangaloreNodes, type Node } from "../data/nodedata";
 import Configuration from "./Configuration";
 import L from "leaflet";
+import { computeNodeWorkload } from "../utils/tspCostUtils";
 
 type MapViewProps = {
   addMode?: boolean;
 };
 
 function MapClickHandler({ addMode }: MapViewProps) {
-  const { defaultTasks, defaultTaskEffort, defaultNodeDifficulty } = useDefaultNode();
+  const { defaultTasks, defaultTaskEffort } = useDefaultNode();
   const [nodes, setNodes] = useState([...mangaloreNodes]);
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -60,7 +61,6 @@ function MapClickHandler({ addMode }: MapViewProps) {
         type: "Custom",
         tasks: [...defaultTasks],
         effort: { ...defaultTaskEffort},
-        nodeDifficulty: defaultNodeDifficulty
       };
 
       setNodes((prev) => [...prev, newNode]);
@@ -134,7 +134,6 @@ function MapClickHandler({ addMode }: MapViewProps) {
                       effort: Object.keys(node.effort || {}).length
                         ? { ...node.effort }
                         : { ...defaultTaskEffort },
-                      nodeDifficulty: defaultNodeDifficulty
                     });
 
                   }}
@@ -179,7 +178,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
               <label style={{ marginTop: '10px', display: 'block' }}>Difficulty (0-10)</label>
               <input
                 type="number"
-                value={editingNode.nodeDifficulty}
+                value={computeNodeWorkload(editingNode)}
                 readOnly
                 disabled
               />
@@ -193,7 +192,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
               tasks={editingNode.tasks}
               effort={editingNode.effort}
               onChange={(newTasks, newEffort) => {
-                setEditingNode({ ...editingNode, tasks: newTasks, effort: newEffort, nodeDifficulty:defaultNodeDifficulty });
+                setEditingNode({ ...editingNode, tasks: newTasks, effort: newEffort });
               }}
             />
 
