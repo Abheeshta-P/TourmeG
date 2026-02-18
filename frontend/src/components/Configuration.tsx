@@ -2,24 +2,13 @@ import { useDefaultNode } from '../context/DefaultNodeContext';
 
 const allTasks = ["Eat", "Drink", "Sightseeing", "Read", "Shopping", "Other"];
 
-function Configuration() {
-  const getCrowdLabel = (value: number) => {
-    if (value <= 2) return "Very Low";
-    if (value <= 4) return "Low";
-    if (value <= 6) return "Moderate";
-    if (value <= 8) return "High";
-    return "Very High";
-  };
+function Configuration({text="At all places."}:{text?:string}) {
 
   const {
-    defaultCrowd,
     defaultTasks,
     defaultTaskEffort,
-    defaultTime,
-    setDefaultCrowd,
     setDefaultTasks,
     setDefaultTaskEffort,
-    setDefaultTime,
   } = useDefaultNode();
 
   const toggleTask = (task: string) => {
@@ -41,38 +30,10 @@ function Configuration() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, padding: 12 }}>
-
-      {/* Crowd */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <label style={{ fontWeight: 500 }}>
-          Crowd Preference: <strong>{defaultCrowd} ({getCrowdLabel(defaultCrowd)})</strong>
-        </label>
-        <input
-          type="range"
-          min={0}
-          max={10}
-          value={defaultCrowd}
-          onChange={(e) => setDefaultCrowd(Number(e.currentTarget.value))}
-        />
-      </div>
-
-      {/* Time */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <label style={{ fontWeight: 500 }}>Time at Node (minutes):</label>
-        <input
-          type="number"
-          min={0}
-          value={defaultTime}
-          onChange={(e) => setDefaultTime(Number(e.currentTarget.value))}
-          style={{ width: 100 }}
-        />
-      </div>
-
-      {/* Tasks */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        <h3>Tasks & Effort</h3>
-        {allTasks.map((task) => (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <h3>Tasks & Effort : <i>{text}</i></h3>
+      {
+        allTasks.map((task) => (
           <div
             key={task}
             style={{
@@ -98,9 +59,9 @@ function Configuration() {
               />
             )}
           </div>
-        ))}
-      </div>
-    </div>
+        ))
+      }
+    </div >
   );
 }
 

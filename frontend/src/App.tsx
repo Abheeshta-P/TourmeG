@@ -12,7 +12,7 @@ function App() {
       <Toaster richColors position="top-center" />      {/* Sidebar */}
       <div className={`sidebar ${sidebar ? "" : "close"}`}>
         <div className="sidebar-header">
-          <h2>Default Settings</h2>
+          <h2>Default Settings ⚙️</h2>
           <button className="close-btn" onClick={() => setSideBar(false)}>
             ✕
           </button>

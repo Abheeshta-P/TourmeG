@@ -9,7 +9,7 @@ type MapViewProps = {
 };
 
 function MapClickHandler({ addMode }: MapViewProps) {
-  const { defaultCrowd, defaultTime, defaultTasks } = useDefaultNode();
+  const { defaultTasks } = useDefaultNode();
   const [nodes, setNodes] = useState([...mangaloreNodes]);
 
   const MAX_NODES = 15;
@@ -47,8 +47,6 @@ function MapClickHandler({ addMode }: MapViewProps) {
         position: [lat, lng] as [number, number],
         type: "Custom",
         tasks: [...defaultTasks],
-        crowd: defaultCrowd,
-        time: defaultTime,
         effort: {},
         nodeDifficulty: 0
       };
