@@ -82,23 +82,5 @@ export const mangaloreNodes: Node[] = [
     nodeDifficulty: 0,
     effort: {},
   },
-  {
-    id: 9,
-    name: "Sultan Battery",
-    position: [12.890702112387688, 74.8208207512087],
-    type: "Historic",
-    tasks: [],
-    nodeDifficulty: 0,
-    effort: {},
-  },
-  {
-    id: 10,
-    name: "Kudroli Gokarnath Temple",
-    position: [12.876278548787308, 74.83133376172098],
-    type: "Temple",
-    tasks: [],
-    nodeDifficulty: 0,
-    effort: {},
-  },
 ];
 

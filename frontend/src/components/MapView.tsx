@@ -1,21 +1,33 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDefaultNode } from "../context/DefaultNodeContext";
 import {toast} from "sonner";
 import { mangaloreNodes, type Node } from "../data/nodedata";
+import Configuration from "./Configuration";
+import L from "leaflet";
 
 type MapViewProps = {
   addMode?: boolean;
 };
 
 function MapClickHandler({ addMode }: MapViewProps) {
-  const { defaultTasks } = useDefaultNode();
+  const { defaultTasks, defaultTaskEffort, defaultNodeDifficulty } = useDefaultNode();
   const [nodes, setNodes] = useState([...mangaloreNodes]);
 
-  const MAX_NODES = 15;
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const MAX_NODES = 10;
 
   // State to track which node we are currently "configuring"
   const [editingNode, setEditingNode] = useState<Node | null>(null);
+
+  useEffect(() => {
+    if (editingNode && modalRef.current) {
+      // This tells Leaflet to ignore all mouse events inside this div
+      L.DomEvent.disableClickPropagation(modalRef.current);
+      L.DomEvent.disableScrollPropagation(modalRef.current);
+    }
+  }, [editingNode]);
 
   useMapEvents({
     async click(e) {
@@ -47,8 +59,8 @@ function MapClickHandler({ addMode }: MapViewProps) {
         position: [lat, lng] as [number, number],
         type: "Custom",
         tasks: [...defaultTasks],
-        effort: {},
-        nodeDifficulty: 0
+        effort: { ...defaultTaskEffort},
+        nodeDifficulty: defaultNodeDifficulty
       };
 
       setNodes((prev) => [...prev, newNode]);
@@ -57,10 +69,6 @@ function MapClickHandler({ addMode }: MapViewProps) {
       });
     },
   });
-
-  const updateNodeName = (id: number, newName: string) => {
-    setNodes(nodes.map(n => n.id === id ? { ...n, name: newName } : n));
-  };
 
   // DELETE function
   const deleteNode = (id: number) => {
@@ -79,19 +87,39 @@ function MapClickHandler({ addMode }: MapViewProps) {
     });
   };
 
+  // Updated save function with validation
+  const saveConfig = () => {
+    // 1. Validation: Trim whitespace and check if empty
+    const trimmedName = editingNode?.name?.trim();
+
+    if (!editingNode || !trimmedName) {
+      toast.error('Invalid Name', {
+        description: 'The node name cannot be empty.',
+      });
+      return;
+    }
+
+    // 2. Save logic using the trimmed name
+    setNodes(prev =>
+      prev.map(n =>
+        n.id === editingNode.id
+          ? { ...editingNode, name: trimmedName }
+          : n
+      )
+    );
+
+    setEditingNode(null);
+    toast.success('Configuration Saved');
+  };
+
   return (
     <>
       {nodes.map((node) => (
         <Marker key={node.id} position={node.position}>
           <Popup key={`${node.id}-${node.tasks.join(',')}`}>
             <div style={{ minWidth: '150px' }}>
-              <input
-                value={node.name}
-                onChange={(e) => updateNodeName(node.id, e.target.value)}
-                style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block', width: '100%' }}
-              />
+              <p style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block', width: '100%' }}>{node.name}</p>
               <p style={{ margin: '2px 0' }}>Type: {node.type}</p>
-              <p style={{ margin: '2px 0' }}>Difficulty: {node.nodeDifficulty}</p>
 
               <hr style={{ margin: '8px 0' }} />
 
@@ -100,7 +128,15 @@ function MapClickHandler({ addMode }: MapViewProps) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation(); // Prevents map click
-                    setEditingNode(node);
+                    setEditingNode({
+                      ...node,
+                      tasks: node.tasks?.length ? [...node.tasks] : [...defaultTasks],
+                      effort: Object.keys(node.effort || {}).length
+                        ? { ...node.effort }
+                        : { ...defaultTaskEffort },
+                      nodeDifficulty: defaultNodeDifficulty
+                    });
+
                   }}
                   style={{ cursor: 'pointer', padding: '2px 5px' }}
                 >
@@ -124,30 +160,54 @@ function MapClickHandler({ addMode }: MapViewProps) {
 
       {/* Basic Modal for Config */}
       {editingNode && (
-        <div style={{
-          position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-          backgroundColor: 'white', padding: '20px', zIndex: 1000, borderRadius: '8px',
-          boxShadow: '0 0 10px rgba(0,0,0,0.5)', display: 'flex', flexDirection: 'column', gap: '10px'
-        }}>
-          <h3>Config: {editingNode.name}</h3>
-          <label>Difficulty:
-            <input
-              type="number"
-              value={editingNode.nodeDifficulty}
-              onChange={(e) => setEditingNode({ ...editingNode, nodeDifficulty: Number(e.target.value) })}
+        <div
+          className="modal-overlay" ref={modalRef}>
+          <div className="modal-content">
+            <h2 className="modal-title">Configure Node</h2>
+
+            {/* Node Name & Difficulty */}
+            <div className="modal-section">
+              <label>Node Name</label>
+              <input
+                type="text"
+                value={editingNode.name}
+                minLength={2}
+                maxLength={40}
+                onChange={(e) => setEditingNode({ ...editingNode, name: e.target.value })}
+              />
+
+              <label style={{ marginTop: '10px', display: 'block' }}>Difficulty (0-10)</label>
+              <input
+                type="number"
+                value={editingNode.nodeDifficulty}
+                readOnly
+                disabled
+              />
+            </div>
+
+            <hr className="modal-divider" />
+
+            {/* Reuse your existing Configuration component */}
+            <Configuration
+              text={`${editingNode.name}`}
+              tasks={editingNode.tasks}
+              effort={editingNode.effort}
+              onChange={(newTasks, newEffort) => {
+                setEditingNode({ ...editingNode, tasks: newTasks, effort: newEffort, nodeDifficulty:defaultNodeDifficulty });
+              }}
             />
-          </label>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button onClick={() => {
-              setNodes(nodes.map(n => n.id === editingNode.id ? editingNode : n));
-              setEditingNode(null);
-              toast.success('Configuration Saved', {
-                description: `Settings for ${editingNode.name} updated.`
-              });
-            }}>
-              Save
-            </button>
-            <button onClick={() => setEditingNode(null)}>Cancel</button>
+
+            <div className="modal-actions">
+              <button className="btn-cancel" onClick={() => setEditingNode(null)}>
+                Cancel
+              </button>
+              <button
+                className="btn-save"
+                onClick={saveConfig}
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -160,7 +220,7 @@ export default function MapView({ addMode }: MapViewProps) {
     <MapContainer
       center={[12.88, 74.85]}
       zoom={13}
-      style={{ height: "100%", width: "100%" }}
+      style={{ height: "100%", width: "100%"}}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <MapClickHandler addMode={addMode} />
