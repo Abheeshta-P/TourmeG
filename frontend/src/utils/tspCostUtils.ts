@@ -1,4 +1,3 @@
-// utils/tspCostUtils.ts
 import type { Node } from "../data/nodedata";
 
 /**

@@ -2,10 +2,11 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaf
 import { useEffect, useRef, useState } from "react";
 import { useDefaultNode } from "../context/DefaultNodeContext";
 import {toast} from "sonner";
-import { mangaloreNodes, type Node } from "../data/nodedata";
+import { type Node } from "../data/nodedata";
 import Configuration from "./Configuration";
 import L from "leaflet";
 import { computeNodeWorkload } from "../utils/tspCostUtils";
+import { useNodes } from "../context/NodeContext";
 
 type MapViewProps = {
   addMode?: boolean;
@@ -13,7 +14,7 @@ type MapViewProps = {
 
 function MapClickHandler({ addMode }: MapViewProps) {
   const { defaultTasks, defaultTaskEffort } = useDefaultNode();
-  const [nodes, setNodes] = useState([...mangaloreNodes]);
+  const { nodes, setNodes } = useNodes();
 
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -29,6 +30,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
       L.DomEvent.disableScrollPropagation(modalRef.current);
     }
   }, [editingNode]);
+
 
   useMapEvents({
     async click(e) {

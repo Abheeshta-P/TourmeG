@@ -18,11 +18,11 @@ Done:
 - configuration all done
 - automatically on task input update node difficulty -> on fly calculation for simplicity
 - the configuration seperation is not yet done: needs to change node type uses
+- persistent
+- storage delimmna (Local storage)
+- used tasks cost for node difficulty 
 
 Pending:
-- not persistent
-- storage delimmna (Local storage)
-- did not use tasks cost into anywhere 
 - the given lang and lat is wrong
 - no actual road values for path
 - issue with nodedifficulty

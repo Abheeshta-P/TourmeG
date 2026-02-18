@@ -10,7 +10,7 @@ export default function Configuration({
   text?: string;
   tasks?: string[];
   effort?: Record<string, number>;
-  onChange?: (tasks: string[], effort: Record<string, number>, nodeDifficulty?: number) => void;
+  onChange?: (tasks: string[], effort: Record<string, number>) => void;
 }) {
   const context = useDefaultNode();
 
