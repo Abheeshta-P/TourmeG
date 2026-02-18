@@ -1,6 +1,7 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import { useState } from "react";
 import { useDefaultNode } from "../context/DefaultNodeContext";
+import {toast} from "sonner";
 import { mangaloreNodes, type Node } from "../data/nodedata";
 
 type MapViewProps = {
@@ -11,12 +12,24 @@ function MapClickHandler({ addMode }: MapViewProps) {
   const { defaultCrowd, defaultTime, defaultTasks } = useDefaultNode();
   const [nodes, setNodes] = useState([...mangaloreNodes]);
 
+  const MAX_NODES = 15;
+
   // State to track which node we are currently "configuring"
   const [editingNode, setEditingNode] = useState<Node | null>(null);
 
   useMapEvents({
     async click(e) {
       if (!addMode) return;
+
+      // 1. CHECK BEFORE ADDING
+      if (nodes.length >= MAX_NODES) {
+        toast.error('Limit Reached!', {
+          description: `You can only add up to ${MAX_NODES} nodes. Delete some nodes if you want to add more.`,
+          duration: 5000,
+        });
+        return;
+      }
+
       const { lat, lng } = e.latlng;
       let fetchedName = `New Node ${nodes.length + 1}`;
 
@@ -41,6 +54,9 @@ function MapClickHandler({ addMode }: MapViewProps) {
       };
 
       setNodes((prev) => [...prev, newNode]);
+      toast.success('Node Added!', {
+        description: `${fetchedName} has been placed on the map.`,
+      });
     },
   });
 
@@ -50,7 +66,19 @@ function MapClickHandler({ addMode }: MapViewProps) {
 
   // DELETE function
   const deleteNode = (id: number) => {
+    const nodeToDelete = nodes.find(n => n.id === id);
+    if (!nodeToDelete) return;
+
     setNodes(nodes.filter(n => n.id !== id));
+
+    toast('Node deleted', {
+      description: `${nodeToDelete.name} removed.`,
+      action: {
+        label: 'Undo',
+        onClick: () => setNodes(prev => [...prev, nodeToDelete])
+      },
+      icon:'🗑️'
+    });
   };
 
   return (
@@ -72,13 +100,20 @@ function MapClickHandler({ addMode }: MapViewProps) {
               {/* BUTTONS SECTION */}
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
                 <button
-                  onClick={() => setEditingNode(node)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents map click
+                    setEditingNode(node);
+                  }}
                   style={{ cursor: 'pointer', padding: '2px 5px' }}
                 >
                   ⚙️ Config
                 </button>
+
                 <button
-                  onClick={() => deleteNode(node.id)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevents map click
+                    deleteNode(node.id);
+                  }}
                   style={{ cursor: 'pointer', padding: '2px 5px', color: 'red' }}
                 >
                   🗑️ Delete
@@ -108,7 +143,12 @@ function MapClickHandler({ addMode }: MapViewProps) {
             <button onClick={() => {
               setNodes(nodes.map(n => n.id === editingNode.id ? editingNode : n));
               setEditingNode(null);
-            }}>Save</button>
+              toast.success('Configuration Saved', {
+                description: `Settings for ${editingNode.name} updated.`
+              });
+            }}>
+              Save
+            </button>
             <button onClick={() => setEditingNode(null)}>Cancel</button>
           </div>
         </div>

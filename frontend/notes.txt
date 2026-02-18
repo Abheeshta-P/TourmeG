@@ -12,3 +12,13 @@ city center: 12.872105104628101, 74.84299596416035
 tagore park: 12.87188424976982, 74.84425362791521
 sultan: 12.890702112387688, 74.8208207512087
 kudroli: 12.876278548787308, 74.83133376172098
+
+issues:
+- not persistent
+- storage delimmna (Local storage)
+- configuration not all done
+- the given lang and lat is wrong
+- no actual road values for path
+- did not use tasks cost into anywhere
+- the configuration seperation is not yet done: needs to change node type uses
+- the algorithm is not selected (TSP)

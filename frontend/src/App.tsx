@@ -1,6 +1,7 @@
 import { useState } from "react";
 import MapView from "./components/MapView";
 import Configuration from "./components/Configuration";
+import { Toaster } from "sonner";
 
 function App() {
   const [sidebar, setSideBar] = useState<boolean>(true);
@@ -8,7 +9,7 @@ function App() {
 
   return (
     <div className="main">
-      {/* Sidebar */}
+      <Toaster richColors position="top-center" />      {/* Sidebar */}
       <div className={`sidebar ${sidebar ? "" : "close"}`}>
         <div className="sidebar-header">
           <h2>Default Settings</h2>
