@@ -229,24 +229,3 @@ html, body, #root, .App {
 .route-config .calculate-route:active {
   transform: scale(0.98);
 }
-
-/* Map pin button */
-.route-config .map-pin {
-  padding: 6px 10px;
-  border: none;
-  background: #e6f0ff;
-  border-radius: 6px;
-  border: 1px solid #999;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
-
-
-.route-config .map-pin:hover {
-  background: #cfe2ff;
-}
-
-.map-pin:active {
-  transform: scale(0.95);
-}

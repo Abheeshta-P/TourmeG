@@ -10,7 +10,6 @@ function App() {
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
   const [startNode, setStartNode] = useState<{ lat: number; lng: number } | null>(null);
   const [endNodeId, setEndNodeId] = useState<number | null>(null);
-  // const [pickStartMode, setPickStartMode] = useState<boolean>(false);
   const { nodes } = useNodes();
 
   const handleCalculate = async () => {
@@ -82,7 +81,6 @@ function App() {
                       const node = nodes.find(n => n.id === nodeId);
                       if (node) {
                         setStartNode({ lat: node.position[0], lng: node.position[1] });
-                        // setPickStartMode(false);
                       }
                     }}
                   >
@@ -93,10 +91,6 @@ function App() {
                       </option>
                     ))}
                   </select>
-
-                  {/* <button className="map-pin" onClick={() => setPickStartMode(true)} title="Pick from map">
-                    📍
-                  </button> */}
                 </div>
              </div>
 
