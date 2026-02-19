@@ -11,7 +11,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 1,
     name: "Mangaladevi Temple",
-    position: [12.849436144027004, 74.8454846297991],
+    position: [12.849228, 74.845256],
     type: "Temple",
     tasks: [],
     effort: {},
@@ -19,7 +19,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 2,
     name: "Sharavu Ganapati Temple",
-    position: [12.870676310217375, 74.84090241045409],
+    position: [12.870315, 74.840219],
     type: "Temple",
     tasks: [],
     effort: {},
@@ -27,7 +27,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 3,
     name: "St. Aloysius Chapel / Museum",
-    position: [12.873873510598308, 74.84484162421218],
+    position: [12.873803, 74.845358],
     type: "Museum",
     tasks: [],
     effort: {},
@@ -35,7 +35,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 4,
     name: "Pilikula Nisargadhama",
-    position: [12.927664565161715, 74.89951726627557],
+    position: [12.9268897, 74.9000595],
     type: "Park",
     tasks: [],
     effort: {},
@@ -43,7 +43,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 5,
     name: "Kadri Manjunath Temple",
-    position: [12.885963236241937, 74.85569386812627],
+    position: [12.885697, 74.855523],
     type: "Temple",
     tasks: [],
     effort: {},
@@ -51,7 +51,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 6,
     name: "Tannirbavi Beach",
-    position: [12.887369353235473, 74.8130157152398],
+    position: [12.886916, 74.815949],
     type: "Beach",
     tasks: [],
     effort: {},
@@ -59,7 +59,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 7,
     name: "City Center / Market",
-    position: [12.872105104628101, 74.84299596416035],
+    position: [12.871261, 74.842826],
     type: "Market",
     tasks: [],
     effort: {},
@@ -67,7 +67,7 @@ export const mangaloreNodes: Node[] = [
   {
     id: 8,
     name: "Tagore Park",
-    position: [12.87188424976982, 74.84425362791521],
+    position: [12.871544, 74.843942],
     type: "Park",
     tasks: [],
     effort: {},

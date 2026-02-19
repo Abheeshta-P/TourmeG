@@ -21,10 +21,10 @@ Done:
 - persistent
 - storage delimmna (Local storage)
 - used tasks cost for node difficulty 
+- the given lang and lat is correct
+- downloaded actual road values for path and constarined the leaflet.js
 
 Pending:
-- the given lang and lat is wrong
-- no actual road values for path
 - issue with nodedifficulty
 
  setEditingNode({

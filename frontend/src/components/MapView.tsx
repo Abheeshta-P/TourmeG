@@ -219,9 +219,16 @@ function MapClickHandler({ addMode }: MapViewProps) {
 export default function MapView({ addMode }: MapViewProps) {
   return (
     <MapContainer
-      center={[12.88, 74.85]}
-      zoom={13}
-      style={{ height: "100%", width: "100%"}}
+      center={[12.87, 75.05]} // Slightly adjusted center for the new box
+      zoom={11}
+      style={{ height: "100%", width: "100%" }}
+      maxBounds={[
+        [12.5500, 74.7386], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
+        [13.0800, 75.6120]  // North East: Moved DOWN from 13.17 to stay below Udupi
+      ]}
+      maxBoundsViscosity={1.0}
+      minZoom={10}
+      maxZoom={18}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <MapClickHandler addMode={addMode} />
