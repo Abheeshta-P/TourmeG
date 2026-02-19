@@ -45,13 +45,17 @@ function MapClickHandler({ addMode }: MapViewProps) {
         return;
       }
 
-      const { lat, lng } = e.latlng;
+      let { lat, lng } = e.latlng;
       let fetchedName = `New Node ${nodes.length + 1}`;
+      let type = "Custom";
 
       try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`);
         const data = await response.json();
         fetchedName = data.display_name.split(',')[0] || fetchedName;
+        type = data.type || type;
+        lat = data.lat || lat;
+        lng = data.lng || lng;
       } catch (error) {
         console.error("Geocoding failed", error);
       }
@@ -60,7 +64,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
         id: Date.now(),
         name: fetchedName,
         position: [lat, lng] as [number, number],
-        type: "Custom",
+        type: type,
         tasks: [...defaultTasks],
         effort: { ...defaultTaskEffort},
       };

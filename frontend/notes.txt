@@ -23,8 +23,10 @@ Done:
 - used tasks cost for node difficulty 
 - the given lang and lat is correct
 - downloaded actual road values for path and constarined the leaflet.js
+- added start node from drop down/current location: choose drop down, enhancement: map
 
 Pending:
+- If custom node there is node ID as per OSM other don't either we can hard code that too or snap it
 - issue with nodedifficulty
 
  setEditingNode({
