@@ -3,6 +3,7 @@ import { type Node } from "../data/nodedata";
 
 const NODES_KEY = "map_nodes_data";
 const DEFAULTS_KEY = "map_default_settings";
+const ROUTE_KEY = "last_calculated_route";
 
 export const storage = {
   // Save Nodes to LocalStorage
@@ -25,5 +26,18 @@ export const storage = {
   loadDefaults: () => {
     const saved = localStorage.getItem(DEFAULTS_KEY);
     return saved ? JSON.parse(saved) : { tasks: [], effort: {} };
+  },
+
+  saveRoute: (path: [number, number][]) => {
+    localStorage.setItem(ROUTE_KEY, JSON.stringify(path));
+  },
+
+  loadRoute: (): [number, number][] => {
+    const saved = localStorage.getItem(ROUTE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  },
+
+  clearRoute: () => {
+    localStorage.removeItem(ROUTE_KEY);
   },
 };

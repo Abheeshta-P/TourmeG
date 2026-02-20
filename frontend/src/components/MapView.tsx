@@ -1,7 +1,7 @@
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Polyline } from "react-leaflet";
 import { useEffect, useRef, useState } from "react";
 import { useDefaultNode } from "../context/DefaultNodeContext";
-import {toast} from "sonner";
+import { toast } from "sonner";
 import { type Node } from "../data/nodedata";
 import Configuration from "./Configuration";
 import L from "leaflet";
@@ -10,6 +10,7 @@ import { useNodes } from "../context/NodeContext";
 
 type MapViewProps = {
   addMode?: boolean;
+  routePath?: [number, number][]; // Add this
 };
 
 function MapClickHandler({ addMode }: MapViewProps) {
@@ -61,12 +62,12 @@ function MapClickHandler({ addMode }: MapViewProps) {
       }
 
       const newNode = {
-        id: Date.now(),
+        id: nodes.length + 1,
         name: fetchedName,
         position: [lat, lng] as [number, number],
         type: type,
         tasks: [...defaultTasks],
-        effort: { ...defaultTaskEffort},
+        effort: { ...defaultTaskEffort },
       };
 
       setNodes((prev) => [...prev, newNode]);
@@ -89,7 +90,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
         label: 'Undo',
         onClick: () => setNodes(prev => [...prev, nodeToDelete])
       },
-      icon:'🗑️'
+      icon: '🗑️'
     });
   };
 
@@ -220,7 +221,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
   );
 }
 
-export default function MapView({ addMode }: MapViewProps) {
+export default function MapView({ addMode, routePath }: MapViewProps) {
   return (
     <MapContainer
       center={[12.87, 75.05]} // Slightly adjusted center for the new box
@@ -235,6 +236,18 @@ export default function MapView({ addMode }: MapViewProps) {
       maxZoom={18}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+      {routePath && routePath.length > 0 && (
+        <Polyline
+          positions={routePath}
+          pathOptions={{
+            color: '#3b82f6',
+            weight: 5,
+            opacity: 0.8,
+            lineJoin: 'round'
+          }}
+        />
+      )}
       <MapClickHandler addMode={addMode} />
     </MapContainer>
   );

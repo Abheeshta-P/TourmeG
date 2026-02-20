@@ -26,6 +26,7 @@ Done:
 - added start node from drop down/current location: choose drop down, enhancement: map
 
 Pending:
+- Add a different type of node array to be returned from frontend to backend, it contains id,lat,lan,nodeEffort. Together with this send the start and end node id
 - If custom node there is node ID as per OSM other don't either we can hard code that too or snap it
 - issue with nodedifficulty
 

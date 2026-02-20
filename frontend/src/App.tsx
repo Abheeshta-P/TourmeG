@@ -3,38 +3,78 @@ import MapView from "./components/MapView";
 import Configuration from "./components/Configuration";
 import { toast, Toaster } from "sonner";
 import { useNodes } from "./context/NodeContext";
+import { computeNodeWorkload } from "./utils/tspCostUtils";
+import { storage } from "./utils/storageUtils";
+import { API_ENDPOINTS } from "./config/config";
+
+interface BackendNode {
+  id: number;
+  lat: number;
+  lon: number;
+}
 
 function App() {
   const [sidebar, setSideBar] = useState<boolean>(true);
   const [addMode, setAddMode] = useState<boolean>(false);
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
-  const [startNode, setStartNode] = useState<{ lat: number; lng: number } | null>(null);
+  const [startNode, setStartNode] = useState<number | null>(null);
   const [endNodeId, setEndNodeId] = useState<number | null>(null);
   const { nodes } = useNodes();
-
+  const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute());
+  
   const handleCalculate = async () => {
     if (!startNode) {
       toast.error("Start node is required");
       return;
     }
 
+    // 1. Prepare the stops array with all the data the backend needs
+    const stops = nodes.map(n => ({
+      id: n.id,
+      lat: n.position[0],
+      lon: n.position[1],
+      totalWorkload: computeNodeWorkload(n) // Using your cool util!
+    }));
+
+    // 2. Find the POSITION (0, 1, 2...) of the node in the array
+    const startIdx = nodes.findIndex(n => n.id === startNode);
+
+    // 3. Match the endNodeId to its POSITION in the array
+    const endIdx = endNodeId ? nodes.findIndex(n => n.id === endNodeId) : null;
+
     const payload = {
-      startNode,
-      endNodeId,
-      selectedNodes: nodes.map(n => n.id),
+      stops: stops,
+      startIdx: startIdx,
+      endIdx: endIdx,
     };
 
     try {
-      const res = await fetch("/api/route/calculate", {
+      toast.info("Calculating optimal route...");
+
+      const res = await fetch(API_ENDPOINTS.CALCULATE_ROUTE, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      console.log(data);
+      if (!res.ok) throw new Error("Server responded with an error");
+
+      const data:BackendNode[] = await res.json(); // This is your List<Node> from Java
+
+      // 4. Map the data for Leaflet [lat, lon]
+      const polylinePath: [number, number][] = data.map(node => [node.lat, node.lon]);
+
+      setRoutePath(polylinePath);
+      storage.saveRoute(polylinePath); 
+      toast.success("Route optimized!");
+
     } catch (err) {
-      toast.error("Failed to calculate route" + err);
+      if (err instanceof Error) {
+        console.error(err);
+        toast.error("Failed to calculate route: " + err.message);
+      } else {
+        console.log("Unknown error", err);
+      }
     }
   };
 
@@ -80,7 +120,7 @@ function App() {
                       const nodeId = Number(e.target.value);
                       const node = nodes.find(n => n.id === nodeId);
                       if (node) {
-                        setStartNode({ lat: node.position[0], lng: node.position[1] });
+                        setStartNode(nodeId);
                       }
                     }}
                   >
@@ -97,7 +137,13 @@ function App() {
               <div>
                 <h3>End Node (Optional)</h3>
                 <select
-                  onChange={(e) => setEndNodeId(Number(e.target.value))}
+                  onChange={(e) => {
+                    const nodeId = Number(e.target.value);
+                    const node = nodes.find(n => n.id === nodeId);
+                    if (node) {
+                      setEndNodeId(nodeId);
+                    }
+                  }}
                 >
                   <option value="">None</option>
                   {nodes.map(n => (
@@ -108,9 +154,34 @@ function App() {
                 </select>
               </div>
 
-              <button onClick={handleCalculate} className="calculate-route">
-                Calculate Route
-              </button>
+              <div style={{ display: 'flex', flexDirection:"row", gap: '8px', marginTop: '12px' }}>
+                <button
+                  onClick={handleCalculate}
+                  className="calculate-route"
+                  style={{ flex: 1 }}
+                >
+                  Calculate Route
+                </button>
+
+                {routePath.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setRoutePath([]);
+                      storage.clearRoute();
+                      toast.info("Route cleared");
+                    }}
+                    className="clear-route"
+                    style={{
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      padding: '0 12px'
+                    }}
+                    title="Remove the route"
+                  >
+                    🗑️
+                  </button>
+                )}
+              </div>
 
             </div>
           </>
@@ -126,7 +197,7 @@ function App() {
 
       {/* Map container */}
       <div className="map-container">
-        <MapView addMode={addMode} />
+        <MapView addMode={addMode} routePath={routePath} />
       </div>
     </div>
   );
