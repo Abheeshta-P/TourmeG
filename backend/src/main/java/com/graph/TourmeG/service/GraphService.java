@@ -15,15 +15,7 @@ import java.util.*;
 @Service
 public class GraphService {
 
-    private class PathResult {
-        private double distance;
-        private List<Node> path;
-
-        PathResult(double d, List<Node> p){
-            distance = d;
-            path = p;
-        }
-    }
+    public record PathResult(double distance, List<Node> path){}
 
     private class NodeWrapper implements Comparable<NodeWrapper>{
         private double fscore;
@@ -68,7 +60,7 @@ public class GraphService {
             // First populate the points/nodes to form the nodemap
             for (JsonNode element : elements) {
                 // 1. Convert to text before comparing
-                if (element.get("type").toString().equals("node")) {
+                if (element.get("type").asText().equals("node")) {
 
                     // 2. Use Jackson's built-in conversion (much faster than parsing strings)
                     long id = element.get("id").asLong();
@@ -88,7 +80,7 @@ public class GraphService {
             // Populate the adj list by going though the ways (type:way)
             // inside nodes array there are node ids for which nodes are picked from the nodeMap
             for(JsonNode element:elements){
-                if(element.get("type").toString().equals("way")){
+                if(element.get("type").asText().equals("way")){
                     JsonNode nodesOfWay = element.get("nodes");
                     if(!nodesOfWay.isArray()){
                         throw new RuntimeException("Nodes in file does not contain any node, check the data.");
@@ -116,12 +108,20 @@ public class GraphService {
                 }
             }
 
+            System.out.println("GRAPH STATUS: I have " + nodeMap.size() + " nodes in my map.");
+
         }catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private double calculateDistance(Node a, Node b) {
+        if (a == null || b == null) {
+            // Log exactly which node is missing to help you debug
+            System.err.println("CRITICAL: One of the nodes is NULL. A: " + a + " B: " + b);
+            return Double.MAX_VALUE;
+        }
+
         double R = 6371000; // Earth's radius in meters
         double lat1 = Math.toRadians(a.getLat());
         double lat2 = Math.toRadians(b.getLat());
@@ -149,6 +149,10 @@ public class GraphService {
                 minDist = dist;
                 nodeId = node.getId();
             }
+        }
+
+        if (!nodeMap.containsKey(nodeId)) {
+            System.out.println("Warning: Nearest ID " + nodeId + " found but it is NOT in the allNodes map!");
         }
 
         return nodeId;
