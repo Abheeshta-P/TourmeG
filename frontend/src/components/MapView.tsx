@@ -7,6 +7,7 @@ import Configuration from "./Configuration";
 import L from "leaflet";
 import { computeNodeWorkload } from "../utils/tspCostUtils";
 import { useNodes } from "../context/NodeContext";
+import { storage } from "../utils/storageUtils";
 
 type MapViewProps = {
   addMode?: boolean;
@@ -36,17 +37,31 @@ function MapClickHandler({ addMode }: MapViewProps) {
   useMapEvents({
     async click(e) {
       if (!addMode) return;
+      
+      let { lat, lng } = e.latlng;
 
-      // 1. CHECK BEFORE ADDING
-      if (nodes.length >= MAX_NODES) {
-        toast.error('Limit Reached!', {
-          description: `You can only add up to ${MAX_NODES} nodes. Delete some nodes if you want to add more.`,
-          duration: 5000,
+      // 1. DEFINE YOUR RANGE (Based on your maxBounds)
+      const minLat = 12.5500;
+      const maxLat = 13.0800;
+      const minLon = 74.0000; // Your southwest lon
+      const maxLon = 75.6120; // Your northeast lon
+
+      // 2. VALIDATION CHECK
+      if (lat < minLat || lat > maxLat || lng < minLon || lng > maxLon) {
+        toast.error("Out of Bounds", {
+          description: "You can only add nodes within the Mangaluru service area.",
         });
         return;
       }
 
-      let { lat, lng } = e.latlng;
+      // 3. CHECK NODE LIMIT
+      if (nodes.length >= MAX_NODES) {
+        toast.error('Limit Reached!', {
+          description: `Max ${MAX_NODES} nodes allowed.`,
+        });
+        return;
+      }
+
       let fetchedName = `New Node ${nodes.length + 1}`;
       let type = "Custom";
 
@@ -62,7 +77,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
       }
 
       const newNode = {
-        id: nodes.length + 1,
+        id: nodes.length + 20,
         name: fetchedName,
         position: [lat, lng] as [number, number],
         type: type,
@@ -83,6 +98,9 @@ function MapClickHandler({ addMode }: MapViewProps) {
     if (!nodeToDelete) return;
 
     setNodes(nodes.filter(n => n.id !== id));
+
+    storage.clearRoute();
+    window.location.reload();
 
     toast('Node deleted', {
       description: `${nodeToDelete.name} removed.`,
@@ -228,7 +246,7 @@ export default function MapView({ addMode, routePath }: MapViewProps) {
       zoom={11}
       style={{ height: "100%", width: "100%" }}
       maxBounds={[
-        [12.5500, 74.7386], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
+        [12.5500, 74], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
         [13.0800, 75.6120]  // North East: Moved DOWN from 13.17 to stay below Udupi
       ]}
       maxBoundsViscosity={1.0}

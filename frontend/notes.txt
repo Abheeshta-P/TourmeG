@@ -24,11 +24,13 @@ Done:
 - the given lang and lat is correct
 - downloaded actual road values for path and constarined the leaflet.js
 - added start node from drop down/current location: choose drop down, enhancement: map
+- issue with nodedifficulty (temp fix with efficient stuff local storage is mismatched)
+- If custom node there is node ID as per OSM other don't either we can hard code that too or snap it: solved with nearby
+- Add a different type of node array to be returned from frontend to backend, it contains id,lat,lan,nodeEffort. Together with this send the start and end node id
+- glitch: Issue with pilikula, near by it can zoo it doesnt show option logic backend
 
 Pending:
-- Add a different type of node array to be returned from frontend to backend, it contains id,lat,lan,nodeEffort. Together with this send the start and end node id
-- If custom node there is node ID as per OSM other don't either we can hard code that too or snap it
-- issue with nodedifficulty
+- Responsive
 
  setEditingNode({
   ...node,

@@ -3,9 +3,10 @@ import MapView from "./components/MapView";
 import Configuration from "./components/Configuration";
 import { toast, Toaster } from "sonner";
 import { useNodes } from "./context/NodeContext";
-import { computeNodeWorkload } from "./utils/tspCostUtils";
+import { computeNodeWorkload, getEffectiveNodeData } from "./utils/tspCostUtils";
 import { storage } from "./utils/storageUtils";
 import { API_ENDPOINTS } from "./config/config";
+import { useDefaultNode } from "./context/DefaultNodeContext";
 
 interface BackendNode {
   id: number;
@@ -17,27 +18,31 @@ function App() {
   const [sidebar, setSideBar] = useState<boolean>(true);
   const [addMode, setAddMode] = useState<boolean>(false);
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
-  const [startNode, setStartNode] = useState<number | null>(null);
+  const [startNodeId, setstartNodeId] = useState<number | null>(null);
   const [endNodeId, setEndNodeId] = useState<number | null>(null);
   const { nodes } = useNodes();
+  const { defaultTaskEffort, defaultTasks } = useDefaultNode();
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute());
   
   const handleCalculate = async () => {
-    if (!startNode) {
+    if (!startNodeId) {
       toast.error("Start node is required");
       return;
     }
 
     // 1. Prepare the stops array with all the data the backend needs
-    const stops = nodes.map(n => ({
-      id: n.id,
-      lat: n.position[0],
-      lon: n.position[1],
-      totalWorkload: computeNodeWorkload(n) // Using your cool util!
-    }));
+    const stops = nodes.map(n => {
+      const effective = getEffectiveNodeData(n, defaultTasks, defaultTaskEffort);
+      return {
+        id: effective.id,
+        lat: effective.position[0],
+        lon: effective.position[1],
+        totalWorkload: computeNodeWorkload(effective) // Now sends the correct workload!
+      };
+    });
 
     // 2. Find the POSITION (0, 1, 2...) of the node in the array
-    const startIdx = nodes.findIndex(n => n.id === startNode);
+    const startIdx = nodes.findIndex(n => n.id === startNodeId);
 
     // 3. Match the endNodeId to its POSITION in the array
     const endIdx = endNodeId ? nodes.findIndex(n => n.id === endNodeId) : null;
@@ -56,6 +61,8 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      // Add this right before your fetch() call in App.tsx
+      console.log("Payload being sent:", JSON.stringify(payload, null, 2));
 
       if (!res.ok) throw new Error("Server responded with an error");
 
@@ -116,11 +123,13 @@ function App() {
                 <h3>Start Node *</h3>
                 <div>
                   <select
+                    value={startNodeId || ""}
                     onChange={(e) => {
-                      const nodeId = Number(e.target.value);
-                      const node = nodes.find(n => n.id === nodeId);
-                      if (node) {
-                        setStartNode(nodeId);
+                      const val = e.target.value;
+                      if (val === "" || val === "NaN") {
+                        setstartNodeId(null);
+                      } else {
+                        setstartNodeId(Number(val));
                       }
                     }}
                   >
@@ -137,11 +146,13 @@ function App() {
               <div>
                 <h3>End Node (Optional)</h3>
                 <select
+                  value={endNodeId || ""}
                   onChange={(e) => {
-                    const nodeId = Number(e.target.value);
-                    const node = nodes.find(n => n.id === nodeId);
-                    if (node) {
-                      setEndNodeId(nodeId);
+                    const val = e.target.value;
+                    if (val === "" || val === "NaN") {
+                      setEndNodeId(null);
+                    } else {
+                      setEndNodeId(Number(val));
                     }
                   }}
                 >
