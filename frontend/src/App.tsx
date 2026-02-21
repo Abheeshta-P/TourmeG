@@ -23,7 +23,7 @@ function App() {
   const { nodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute());
-  
+
   const handleCalculate = async () => {
     if (!startNodeId) {
       toast.error("Start node is required");
@@ -37,7 +37,7 @@ function App() {
         id: effective.id,
         lat: effective.position[0],
         lon: effective.position[1],
-        totalWorkload: computeNodeWorkload(effective) // Now sends the correct workload!
+        totalWorkload: computeNodeWorkload(effective) 
       };
     });
 
@@ -61,18 +61,18 @@ function App() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      // Add this right before your fetch() call in App.tsx
-      console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+
+      // console.log("Payload being sent:", JSON.stringify(payload, null, 2));
 
       if (!res.ok) throw new Error("Server responded with an error");
 
-      const data:BackendNode[] = await res.json(); // This is your List<Node> from Java
+      const data: BackendNode[] = await res.json(); 
 
       // 4. Map the data for Leaflet [lat, lon]
       const polylinePath: [number, number][] = data.map(node => [node.lat, node.lon]);
 
       setRoutePath(polylinePath);
-      storage.saveRoute(polylinePath); 
+      storage.saveRoute(polylinePath);
       toast.success("Route optimized!");
 
     } catch (err) {
@@ -88,27 +88,28 @@ function App() {
 
   return (
     <div className="main">
-      <Toaster richColors position="top-center" />      {/* Sidebar */}
+      <Toaster richColors position="top-center" />
+      {/* Sidebar */}
       <div className={`sidebar ${sidebar ? "" : "close"}`}>
         <div className="sidebar-header">
           <div>
-            <h2>Default Settings ⚙️</h2>
+            <h2>Default Settings</h2>
             <p className="helper-text">
-              Applied when creating a new node
+              Applied when creating a new place
             </p>
-         </div>
+          </div>
           <button className="close-btn" onClick={() => setSideBar(false)}>
             ✕
           </button>
         </div>
 
-        <Configuration/>
+        <Configuration />
 
         <hr />
 
         <h2>Actions</h2>
         <button onClick={() => setAddMode(!addMode)}>
-          {addMode ? "Exit Add Mode" : "Add Node Mode"}
+          {addMode ? "Exit Add Mode" : "Add Place Mode"}
         </button>
 
         <button onClick={() => setShowRouteConfig(!showRouteConfig)}>
@@ -120,31 +121,29 @@ function App() {
             <div className="route-config">
 
               <div>
-                <h3>Start Node *</h3>
-                <div>
-                  <select
-                    value={startNodeId || ""}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (val === "" || val === "NaN") {
-                        setstartNodeId(null);
-                      } else {
-                        setstartNodeId(Number(val));
-                      }
-                    }}
-                  >
-                    <option value="">Select existing node</option>
-                    {nodes.map(n => (
-                      <option key={n.id} value={n.id}>
-                        {n.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-             </div>
+                <h3>Start place *</h3>
+                <select
+                  value={startNodeId || ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "" || val === "NaN") {
+                      setstartNodeId(null);
+                    } else {
+                      setstartNodeId(Number(val));
+                    }
+                  }}
+                >
+                  <option value="">Select existing place</option>
+                  {nodes.map(n => (
+                    <option key={n.id} value={n.id}>
+                      {n.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <div>
-                <h3>End Node (Optional)</h3>
+                <h3>End place (Optional)</h3>
                 <select
                   value={endNodeId || ""}
                   onChange={(e) => {
@@ -165,11 +164,10 @@ function App() {
                 </select>
               </div>
 
-              <div style={{ display: 'flex', flexDirection:"row", gap: '8px', marginTop: '12px' }}>
+              <div className="route-buttons">
                 <button
                   onClick={handleCalculate}
                   className="calculate-route"
-                  style={{ flex: 1 }}
                 >
                   Calculate Route
                 </button>
@@ -182,11 +180,6 @@ function App() {
                       toast.info("Route cleared");
                     }}
                     className="clear-route"
-                    style={{
-                      backgroundColor: '#ef4444',
-                      color: 'white',
-                      padding: '0 12px'
-                    }}
                     title="Remove the route"
                   >
                     🗑️

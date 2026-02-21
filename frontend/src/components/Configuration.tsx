@@ -17,7 +17,6 @@ export default function Configuration({
   // If props exist (Modal mode), use them. If not (Sidebar mode), use context.
   const currentTasks = tasks ?? context.defaultTasks;
   const currentEffort = effort ?? context.defaultTaskEffort;
- 
 
   const toggleTask = (task: string) => {
     let newTasks: string[];
@@ -31,7 +30,6 @@ export default function Configuration({
       newEffort[task] = 1;
     }
 
-    // This updates the parent (editingNode) OR the context (global)
     if (onChange) {
       onChange(newTasks, newEffort);
     } else {
@@ -52,20 +50,22 @@ export default function Configuration({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <h3>Tasks & Effort : <i>For {text}</i></h3>
+    <div className="config-container">
+      <h3 className="config-title">
+        Tasks & Effort : <i>For {text}</i>
+      </h3>
       {taskOptions.map((task) => {
         // Use currentTasks directly here to ensure the UI is always in sync
         const isChecked = currentTasks.includes(task);
 
         return (
-          <div key={task} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <div key={task} className="task-row">
             <input
               type="checkbox"
               checked={isChecked}
               onChange={() => toggleTask(task)}
             />
-            <span style={{ flex: 1 }}>{task}</span>
+            <span className="task-name">{task}</span>
             {isChecked && (
               <input
                 type="number"
@@ -73,7 +73,7 @@ export default function Configuration({
                 max={10}
                 value={currentEffort[task] || 1}
                 onChange={(e) => updateEffort(task, Number(e.currentTarget.value))}
-                style={{ width: 50 }}
+                className="task-effort"
               />
             )}
           </div>
