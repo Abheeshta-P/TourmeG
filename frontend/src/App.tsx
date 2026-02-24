@@ -23,6 +23,7 @@ function App() {
   const { nodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute());
+  const [visitOrder, setVisitOrder] = useState<number[]>([]);
 
   const handleCalculate = async () => {
     if (!startNodeId) {
@@ -66,7 +67,43 @@ function App() {
 
       if (!res.ok) throw new Error("Server responded with an error");
 
-      const data: BackendNode[] = await res.json(); 
+      // Inside handleCalculate in App.tsx
+      const data: BackendNode[] = await res.json();
+
+      // 1. Helper to calculate distance between two points (Squared is faster)
+      const getDistSq = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        return Math.pow(lat1 - lat2, 2) + Math.pow(lon1 - lon2, 2);
+      };
+
+      // 2. Map your FRONTEND nodes to the BACKEND path index
+      const orderedNodes = nodes.map(node => {
+        const nodeLat = parseFloat(String(node.position[0]));
+        const nodeLon = parseFloat(String(node.position[1]));
+
+        let closestIndex = -1;
+        let minDistance = Infinity;
+
+        // Search through the backend path to find when we get closest to THIS marker
+        data.forEach((pathPoint, index) => {
+          const dist = getDistSq(nodeLat, nodeLon, pathPoint.lat, pathPoint.lon);
+          if (dist < minDistance) {
+            minDistance = dist;
+            closestIndex = index;
+          }
+        });
+
+        return {
+          id: node.id, // We keep the frontend ID for the visitOrder state
+          pathIndex: closestIndex
+        };
+      });
+
+      // 3. Sort by pathIndex to get the chronological visit order
+      const finalOrder = orderedNodes
+        .sort((a, b) => a.pathIndex - b.pathIndex)
+        .map(item => item.id); // This is now a list of FRONTEND IDs in visit order
+
+      setVisitOrder(finalOrder);
 
       // 4. Map the data for Leaflet [lat, lon]
       const polylinePath: [number, number][] = data.map(node => [node.lat, node.lon]);
@@ -93,16 +130,15 @@ function App() {
       <div className={`sidebar ${sidebar ? "" : "close"}`}>
         <div className="sidebar-header">
           <div>
-            <h2>Default Settings</h2>
+            <h1 className="name">TourmeG</h1>
             <p className="helper-text">
-              Applied when creating a new place
+              This is the panel for default settings, applied when creating a new place
             </p>
           </div>
           <button className="close-btn" onClick={() => setSideBar(false)}>
             ✕
           </button>
         </div>
-
         <Configuration />
 
         <hr />
@@ -201,7 +237,7 @@ function App() {
 
       {/* Map container */}
       <div className="map-container">
-        <MapView addMode={addMode} routePath={routePath} />
+        <MapView addMode={addMode} routePath={routePath}  visitOrder={visitOrder}/>
       </div>
     </div>
   );

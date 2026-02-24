@@ -8,13 +8,40 @@ import L from "leaflet";
 import { computeNodeWorkload } from "../utils/tspCostUtils";
 import { useNodes } from "../context/NodeContext";
 import { storage } from "../utils/storageUtils";
+import { getNextAvailableId } from "../utils";
 
 type MapViewProps = {
   addMode?: boolean;
-  routePath?: [number, number][]; // Add this
+  routePath?: [number, number][];
+  visitOrder?: number[]; // Add this
 };
 
-function MapClickHandler({ addMode }: MapViewProps) {
+const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) => {
+  let bgColor = "#3b82f6"; // Blue
+  if (isStart) bgColor = "#22c55e"; // Green
+  if (isEnd) bgColor = "#ef4444"; // Red
+
+  return L.divIcon({
+    html: `<div style="
+      background-color: ${bgColor};
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      border: 2px solid white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    ">${number}</div>`,
+    className: "",
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+};
+
+function MapClickHandler({ addMode, visitOrder }: MapViewProps) {
   const { defaultTasks, defaultTaskEffort } = useDefaultNode();
   const { nodes, setNodes } = useNodes();
 
@@ -77,7 +104,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
       }
 
       const newNode = {
-        id: nodes.length + 20,
+        id: getNextAvailableId(nodes),
         name: fetchedName,
         position: [lat, lng] as [number, number],
         type: type,
@@ -139,11 +166,29 @@ function MapClickHandler({ addMode }: MapViewProps) {
 
   return (
     <>
-      {nodes.map((node) => (
-        <Marker key={node.id} position={node.position}>
-          <Popup key={`${node.id}-${node.tasks.join(',')}`}>
+      {nodes.map((node) => {
+        const orderIdx = visitOrder ? visitOrder.indexOf(node.id) : -1;
+        const isNumbered = orderIdx !== -1;
+
+        // Logic for the color icons
+        let customIcon;
+        if (isNumbered) {
+          customIcon = createNumberedIcon(
+            orderIdx + 1,
+            orderIdx === 0, // Green for first
+            orderIdx === visitOrder!.length - 1 // Red for last
+          );
+        }
+
+        return (
+          <Marker
+            key={node.id}
+            position={node.position}
+            {...(customIcon ? { icon: customIcon } : {})}
+          >
+            <Popup key={`${node.id}-${node.tasks.join(',')}`}>
             <div style={{ minWidth: '150px' }}>
-              <p style={{ fontWeight: 'bold', marginBottom: '5px', display: 'block', width: '100%' }}>{node.name}</p>
+                <p style={{ marginBottom: '5px', display: 'block', width: '100%' }}> <strong>{isNumbered ? `Step ${orderIdx + 1}: ` : ""}{node.name}</strong></p>
               <p style={{ margin: '2px 0' }}>Type: {node.type}</p>
 
               <hr style={{ margin: '8px 0' }} />
@@ -180,7 +225,8 @@ function MapClickHandler({ addMode }: MapViewProps) {
             </div>
           </Popup>
         </Marker>
-      ))}
+        );
+      })}
 
       {/* Basic Modal for Config */}
       {editingNode && (
@@ -239,7 +285,7 @@ function MapClickHandler({ addMode }: MapViewProps) {
   );
 }
 
-export default function MapView({ addMode, routePath }: MapViewProps) {
+export default function MapView({ addMode, routePath, visitOrder }: MapViewProps) {
   return (
     <MapContainer
       center={[12.87, 75.05]} // Slightly adjusted center for the new box
@@ -262,11 +308,12 @@ export default function MapView({ addMode, routePath }: MapViewProps) {
             color: '#3b82f6',
             weight: 5,
             opacity: 0.8,
+            dashArray: '10, 10', 
             lineJoin: 'round'
           }}
         />
       )}
-      <MapClickHandler addMode={addMode} />
+      <MapClickHandler addMode={addMode} visitOrder={visitOrder} />
     </MapContainer>
   );
 }

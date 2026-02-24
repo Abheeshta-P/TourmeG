@@ -12,6 +12,7 @@ public class TSPSolver {
      * If a path to all nodes cannot be found, it returns the best available full path.
      */
     public List<Integer> solve(double[][] matrix, int startIdx, Integer endIdx) {
+
         int n = matrix.length;
         int numStates = 1 << n; // 2^n combinations
 

@@ -25,6 +25,10 @@ body,
   height: 100vh;
 }
 
+.name {
+  margin: 0;
+}
+
 .sidebar {
   width: 280px;
   padding: 20px;
@@ -322,8 +326,8 @@ body,
   .close-btn {
     font-size: 10px;
   }
-  .sidebar h2 {
-    font-size: 15px;
+  .sidebar h1 {
+    font-size: 25px;
   }
   .helper-text {
     font-size: 11px;
