@@ -7,6 +7,10 @@ import java.util.List;
 @Component
 public class TSPSolver {
 
+    /**
+     * Solves the TSP problem ensuring ALL nodes are visited.
+     * If a path to all nodes cannot be found, it returns the best available full path.
+     */
     public List<Integer> solve(double[][] matrix, int startIdx, Integer endIdx) {
         int n = matrix.length;
         int numStates = 1 << n; // 2^n combinations
@@ -16,7 +20,7 @@ public class TSPSolver {
         // parent[mask][curr] = the node we came from to reach 'curr'
         int[][] parent = new int[numStates][n];
 
-        // 1. Initialize
+        // 1. Initialize with Infinity
         for (int i = 0; i < numStates; i++) {
             for (int j = 0; j < n; j++) {
                 dp[i][j] = Double.MAX_VALUE;
@@ -24,18 +28,21 @@ public class TSPSolver {
             }
         }
 
-        // 2. Base Case: Start at the provided index
+        // 2. Base Case: Start at the user-defined start node
         dp[1 << startIdx][startIdx] = 0.0;
 
-        // 3. Fill DP Table
+        // 3. Fill DP Table (Bitmasking DP)
         for (int mask = 1; mask < numStates; mask++) {
             for (int curr = 0; curr < n; curr++) {
-                if ((mask & (1 << curr)) == 0) continue; // curr node not in mask
-                if (dp[mask][curr] == Double.MAX_VALUE) continue; // unreachable
+                // If current node isn't in this mask or state is unreachable, skip
+                if ((mask & (1 << curr)) == 0 || dp[mask][curr] == Double.MAX_VALUE) continue;
 
                 for (int next = 0; next < n; next++) {
-                    if ((mask & (1 << next)) != 0) continue; // already visited
-                    if (matrix[curr][next] == Double.MAX_VALUE) continue; // no road
+                    // If 'next' is already visited, skip
+                    if ((mask & (1 << next)) != 0) continue;
+
+                    // If no road exists between curr and next, skip
+                    if (matrix[curr][next] == Double.MAX_VALUE) continue;
 
                     int nextMask = mask | (1 << next);
                     double newDist = dp[mask][curr] + matrix[curr][next];

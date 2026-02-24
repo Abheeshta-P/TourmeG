@@ -284,7 +284,7 @@ body,
   gap: 12px;
 }
 
-.route-buttons {
+.route-config .route-buttons {
   display: flex;
   flex-direction: row;
   gap: 8px;
@@ -295,11 +295,15 @@ body,
   flex: 1;
 }
 
-.clear-route {
+.route-buttons .clear-route {
   background-color: #ef4444;
   color: white;
   padding: 0 12px;
   cursor: pointer;
+}
+
+.route-buttons .clear-route:hover {
+  background-color: #dd1010;
 }
 
 @media (max-width: 800px) {

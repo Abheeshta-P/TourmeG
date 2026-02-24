@@ -33,6 +33,7 @@ public class TSPService {
         return assembleFinalPath(optimalIndices);
     }
 
+    // to find the polygonal path from A* algo
     private List<Node> assembleFinalPath(List<Integer> indices) {
         List<Node> fullPath = new ArrayList<>();
 
