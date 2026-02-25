@@ -18,7 +18,7 @@ function App() {
   const [sidebar, setSideBar] = useState<boolean>(true);
   const [addMode, setAddMode] = useState<boolean>(false);
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
-  const [startNodeId, setstartNodeId] = useState<number | null>(()=>storage.loadRoute().startNodeId || null);
+  const [startNodeId, setStartNodeId] = useState<number | null>(()=>storage.loadRoute().startNodeId || null);
   const [endNodeId, setEndNodeId] = useState<number | null>(() => storage.loadRoute().endNodeId || null);
   const { nodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
@@ -168,9 +168,9 @@ function App() {
                   onChange={(e) => {
                     const val = e.target.value;
                     if (val === "" || val === "NaN") {
-                      setstartNodeId(null);
+                      setStartNodeId(null);
                     } else {
-                      setstartNodeId(Number(val));
+                      setStartNodeId(Number(val));
                     }
                   }}
                 >
@@ -216,8 +216,16 @@ function App() {
                 {routePath.length > 0 && (
                   <button
                     onClick={() => {
+                      // 1. Clear State 
                       setRoutePath([]);
+                      setVisitOrder([]);
+                      setStartNodeId(null);
+                      setEndNodeId(null);
+
+                      // 2. Clear Persistence
                       storage.clearRoute();
+
+                      // 3. Notify the user
                       toast.info("Route cleared");
                     }}
                     className="clear-route"
@@ -242,7 +250,7 @@ function App() {
 
       {/* Map container */}
       <div className="map-container">
-        <MapView addMode={addMode} routePath={routePath}  visitOrder={visitOrder}/>
+        <MapView addMode={addMode} routePath={routePath}  visitOrder={visitOrder} setEndNodeId={setEndNodeId} setRoutePath={setRoutePath} setStartNodeId={setStartNodeId} setVisitOrder={setVisitOrder}/>
       </div>
     </div>
   );

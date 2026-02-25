@@ -13,7 +13,11 @@ import { getNextAvailableId } from "../utils";
 type MapViewProps = {
   addMode?: boolean;
   routePath?: [number, number][];
-  visitOrder?: number[]; // Add this
+  visitOrder: number[]; 
+  setRoutePath: (path: [number, number][]) => void;
+  setVisitOrder: (pathId:number[]) => void;
+  setStartNodeId: (n:number|null) => void;
+  setEndNodeId: (n:number|null) => void;
 };
 
 const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) => {
@@ -41,7 +45,7 @@ const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) =>
   });
 };
 
-function MapClickHandler({ addMode, visitOrder }: MapViewProps) {
+function MapClickHandler({ addMode, visitOrder, setEndNodeId, setRoutePath, setStartNodeId, setVisitOrder }: MapViewProps) {
   const { defaultTasks, defaultTaskEffort } = useDefaultNode();
   const { nodes, setNodes } = useNodes();
 
@@ -124,10 +128,14 @@ function MapClickHandler({ addMode, visitOrder }: MapViewProps) {
     const nodeToDelete = nodes.find(n => n.id === id);
     if (!nodeToDelete) return;
 
-    setNodes(nodes.filter(n => n.id !== id));
+    setNodes(prev => prev.filter(n => n.id !== id));
+    setRoutePath([]);
+    setVisitOrder([]);
+    setStartNodeId(null);
+    setEndNodeId(null);
 
     storage.clearRoute();
-    window.location.reload();
+    // window.location.reload();
 
     toast('Node deleted', {
       description: `${nodeToDelete.name} removed.`,
@@ -184,7 +192,7 @@ function MapClickHandler({ addMode, visitOrder }: MapViewProps) {
           <Marker
             key={node.id}
             position={node.position}
-            {...(customIcon ? { icon: customIcon } : {})}
+            icon={isNumbered ? customIcon : new L.Icon.Default()}
           >
             <Popup key={`${node.id}-${node.tasks.join(',')}`}>
             <div style={{ minWidth: '150px' }}>
@@ -285,7 +293,7 @@ function MapClickHandler({ addMode, visitOrder }: MapViewProps) {
   );
 }
 
-export default function MapView({ addMode, routePath, visitOrder }: MapViewProps) {
+export default function MapView({ addMode, routePath, visitOrder, setEndNodeId, setRoutePath, setStartNodeId, setVisitOrder }: MapViewProps) {
   return (
     <MapContainer
       center={[12.87, 75.05]} // Slightly adjusted center for the new box
@@ -313,7 +321,7 @@ export default function MapView({ addMode, routePath, visitOrder }: MapViewProps
           }}
         />
       )}
-      <MapClickHandler addMode={addMode} visitOrder={visitOrder} />
+      <MapClickHandler addMode={addMode} visitOrder={visitOrder} setEndNodeId={setEndNodeId} setRoutePath={setRoutePath} setStartNodeId={setStartNodeId} setVisitOrder={setVisitOrder}/>
     </MapContainer>
   );
 }
