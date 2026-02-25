@@ -21,7 +21,7 @@ public class MatrixService {
     public Map<String, List<Node>> pathCache = new HashMap<>();
 
     // Build the input for TSP
-    public double[][] buildMatrix(List<StopDTO> stops){
+    public double[][] buildMatrix(List<StopDTO> stops, int startIdx){
         int n = stops.size();
         double[][] distanceMatrix = new double[n][n];
         long[] snappedIds = new long[n];
@@ -60,8 +60,10 @@ public class MatrixService {
                     combinedMatrix[i][j] = Double.MAX_VALUE;
                 } else {
                     // Cost to ARRIVE at j = travel distance + workload at j
-                    combinedMatrix[i][j] = distanceMatrix[i][j] + (stops.get(j).getTotalWorkload() * weight);
-                }
+                    // Workload is only 0 if we are returning to the start node.
+
+                    double effectiveWorkload = (j == startIdx) ? 0 : stops.get(j).getTotalWorkload();
+                    combinedMatrix[i][j] = distanceMatrix[i][j] + (effectiveWorkload * weight);                }
             }
         }
 

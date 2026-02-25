@@ -19,7 +19,7 @@ public class TSPService {
 
     public List<Node> calculateTspRoute(List<StopDTO> stops, int startIdx, Integer endIdx) {
         // 1. Generate the cost matrix (Distance + Workload)
-        double[][] combinedMatrix = matrixService.buildMatrix(stops);
+        double[][] combinedMatrix = matrixService.buildMatrix(stops,startIdx);
 
         // 2. Solve for the optimal sequence of indices
         // Example output: [0, 4, 2, 7...]
@@ -41,17 +41,23 @@ public class TSPService {
             int fromIdx = indices.get(k);
             int toIdx = indices.get(k + 1);
 
-            // Fetch the cached road path we stored in MatrixService
+            // Check if we are trying to go from a node to itself (shouldn't happen with TSP, but safe)
+            if (fromIdx == toIdx) continue;
+
             String key = Math.min(fromIdx, toIdx) + "-" + Math.max(fromIdx, toIdx);
             List<Node> segment = matrixService.pathCache.get(key);
 
-            if (segment == null || segment.isEmpty()) continue;
+            if (segment == null || segment.isEmpty()) {
+                // DEBUG: If the return leg is missing, print it so you know!
+                System.out.println("MISSING PATH CACHE FOR: " + key);
+                continue;
+            }
 
-            // Deep copy to avoid modifying the cache
             List<Node> segmentCopy = new ArrayList<>(segment);
 
-            // LOGIC: If we are traveling from Higher Index to Lower Index,
-            // and our cache key was (min-max), we need to reverse the coordinates!
+            // REVERSE LOGIC:
+            // If your cache stores A->B, but you are going B->A, reverse it.
+            // We know we are going "backwards" if fromIdx is the 'Max' part of the key.
             if (fromIdx > toIdx) {
                 Collections.reverse(segmentCopy);
             }

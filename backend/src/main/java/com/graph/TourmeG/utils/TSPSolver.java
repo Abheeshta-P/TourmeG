@@ -56,18 +56,45 @@ public class TSPSolver {
             }
         }
 
-        // 4. Find the best possible path (Handles Broken Roads / Partial Paths)
+        // 4. Find the best possible path
         int bestMask = 0;
         int bestLastNode = -1;
-        int maxNodesVisited = -1;
-        double minCostFound = Double.MAX_VALUE;
 
-        // If endIdx is forced, we first check the full mask for that specific end
+        // CASE A: ROUND TRIP (Start and End are the same)
+        if (endIdx != null && startIdx == endIdx) {
+            double minLoopCost = Double.MAX_VALUE;
+            bestMask = numStates - 1; // We want all nodes visited
+
+            for (int i = 0; i < n; i++) {
+                // We find the node 'i' that allows us to return to startIdx cheapest
+                if (i != startIdx && dp[bestMask][i] != Double.MAX_VALUE && matrix[i][startIdx] != Double.MAX_VALUE) {
+                    double totalCost = dp[bestMask][i] + matrix[i][startIdx];
+                    if (totalCost < minLoopCost) {
+                        minLoopCost = totalCost;
+                        bestLastNode = i;
+                    }
+                }
+            }
+
+            // If a full loop is found, reconstruct and add the closing link
+            if (bestLastNode != -1) {
+                List<Integer> path = reconstructPath(parent, bestLastNode, bestMask);
+                path.add(startIdx); // Manually close the circle
+                return path;
+            }
+            // Fallback: If no full loop is possible, it will drop down to the "Partial Path" logic below
+        }
+
+        // CASE B: SPECIFIC END NODE (Different from start)
         if (endIdx != null && dp[numStates - 1][endIdx] < Double.MAX_VALUE) {
             bestMask = numStates - 1;
             bestLastNode = endIdx;
-        } else {
-            // Otherwise, look for the state with the most nodes visited
+        }
+        // CASE C: BEST PARTIAL PATH (Fallback for broken roads or unspecified end)
+        else {
+            int maxNodesVisited = -1;
+            double minCostFound = Double.MAX_VALUE;
+
             for (int mask = 1; mask < numStates; mask++) {
                 for (int i = 0; i < n; i++) {
                     if (dp[mask][i] == Double.MAX_VALUE) continue;
