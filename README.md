@@ -97,6 +97,9 @@ npm install
 npm run dev
 ```
 
+## Screenshot
+![TourmeG](frontend/public/tourmeg.png)
+
 ### 📝 Small notes:
 
 * **NP-Hard Constraints:** To maintain performance, the application currently limits planning to 10-15 nodes.

@@ -31,7 +31,9 @@ body,
 
 .sidebar {
   width: 280px;
-  padding: 20px;
+  padding-inline: 10px;
+  padding-block: 8px;
+  margin: 0;
   background: #f8f9fa;
   display: flex;
   flex-direction: column;
