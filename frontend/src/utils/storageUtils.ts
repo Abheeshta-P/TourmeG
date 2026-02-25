@@ -45,5 +45,11 @@ export const storage = {
 
   clearRoute: () => {
     localStorage.removeItem(ROUTE_KEY);
+    return {
+      path: [],
+      visitOrder: [],
+      startNodeId: null,
+      endNodeId: null,
+    };
   },
 };

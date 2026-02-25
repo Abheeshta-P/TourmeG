@@ -7,17 +7,13 @@ import Configuration from "./Configuration";
 import L from "leaflet";
 import { computeNodeWorkload } from "../utils/tspCostUtils";
 import { useNodes } from "../context/NodeContext";
-import { storage } from "../utils/storageUtils";
 import { getNextAvailableId } from "../utils";
 
 type MapViewProps = {
   addMode?: boolean;
   routePath?: [number, number][];
-  visitOrder: number[]; 
-  setRoutePath: (path: [number, number][]) => void;
-  setVisitOrder: (pathId:number[]) => void;
-  setStartNodeId: (n:number|null) => void;
-  setEndNodeId: (n:number|null) => void;
+  visitOrder?: number[]; 
+  handleClearAllRouteData: () => void;
 };
 
 const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) => {
@@ -45,7 +41,7 @@ const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) =>
   });
 };
 
-function MapClickHandler({ addMode, visitOrder, setEndNodeId, setRoutePath, setStartNodeId, setVisitOrder }: MapViewProps) {
+function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapViewProps) {
   const { defaultTasks, defaultTaskEffort } = useDefaultNode();
   const { nodes, setNodes } = useNodes();
 
@@ -128,13 +124,7 @@ function MapClickHandler({ addMode, visitOrder, setEndNodeId, setRoutePath, setS
     const nodeToDelete = nodes.find(n => n.id === id);
     if (!nodeToDelete) return;
 
-    setNodes(prev => prev.filter(n => n.id !== id));
-    setRoutePath([]);
-    setVisitOrder([]);
-    setStartNodeId(null);
-    setEndNodeId(null);
-
-    storage.clearRoute();
+    handleClearAllRouteData();
 
     toast('Node deleted', {
       description: `${nodeToDelete.name} removed.`,
@@ -292,7 +282,7 @@ function MapClickHandler({ addMode, visitOrder, setEndNodeId, setRoutePath, setS
   );
 }
 
-export default function MapView({ addMode, routePath, visitOrder, setEndNodeId, setRoutePath, setStartNodeId, setVisitOrder }: MapViewProps) {
+export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData }: MapViewProps) {
   return (
     <MapContainer
       center={[12.87, 75.05]} // Slightly adjusted center for the new box
@@ -320,7 +310,7 @@ export default function MapView({ addMode, routePath, visitOrder, setEndNodeId, 
           }}
         />
       )}
-      <MapClickHandler addMode={addMode} visitOrder={visitOrder} setEndNodeId={setEndNodeId} setRoutePath={setRoutePath} setStartNodeId={setStartNodeId} setVisitOrder={setVisitOrder}/>
+      <MapClickHandler addMode={addMode} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData}/>
     </MapContainer>
   );
 }

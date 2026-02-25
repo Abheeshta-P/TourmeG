@@ -14,6 +14,7 @@ interface BackendNode {
   lon: number;
 }
 
+
 function App() {
   const [sidebar, setSideBar] = useState<boolean>(true);
   const [addMode, setAddMode] = useState<boolean>(false);
@@ -23,7 +24,17 @@ function App() {
   const { nodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute().path);
-  const [visitOrder, setVisitOrder] = useState<number[]>(()=>storage.loadRoute().visitOrder);
+  const [visitOrder, setVisitOrder] = useState<number[]>(() => storage.loadRoute().visitOrder);
+  
+  const handleClearAllRouteData = () => {
+    const emptyState = storage.clearRoute();
+
+    // Sync all React states in one batch
+    setRoutePath(emptyState.path);
+    setVisitOrder(emptyState.visitOrder);
+    setStartNodeId(emptyState.startNodeId);
+    setEndNodeId(emptyState.endNodeId);
+  };
 
   const handleCalculate = async () => {
     if (!startNodeId) {
@@ -216,16 +227,7 @@ function App() {
                 {routePath.length > 0 && (
                   <button
                     onClick={() => {
-                      // 1. Clear State 
-                      setRoutePath([]);
-                      setVisitOrder([]);
-                      setStartNodeId(null);
-                      setEndNodeId(null);
-
-                      // 2. Clear Persistence
-                      storage.clearRoute();
-
-                      // 3. Notify the user
+                      handleClearAllRouteData();
                       toast.info("Route cleared");
                     }}
                     className="clear-route"
@@ -250,7 +252,7 @@ function App() {
 
       {/* Map container */}
       <div className="map-container">
-        <MapView addMode={addMode} routePath={routePath}  visitOrder={visitOrder} setEndNodeId={setEndNodeId} setRoutePath={setRoutePath} setStartNodeId={setStartNodeId} setVisitOrder={setVisitOrder}/>
+        <MapView addMode={addMode} routePath={routePath} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData}/>
       </div>
     </div>
   );
