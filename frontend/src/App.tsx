@@ -18,12 +18,12 @@ function App() {
   const [sidebar, setSideBar] = useState<boolean>(true);
   const [addMode, setAddMode] = useState<boolean>(false);
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
-  const [startNodeId, setstartNodeId] = useState<number | null>(null);
-  const [endNodeId, setEndNodeId] = useState<number | null>(null);
+  const [startNodeId, setstartNodeId] = useState<number | null>(()=>storage.loadRoute().startNodeId || null);
+  const [endNodeId, setEndNodeId] = useState<number | null>(() => storage.loadRoute().endNodeId || null);
   const { nodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
-  const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute());
-  const [visitOrder, setVisitOrder] = useState<number[]>([]);
+  const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute().path);
+  const [visitOrder, setVisitOrder] = useState<number[]>(()=>storage.loadRoute().visitOrder);
 
   const handleCalculate = async () => {
     if (!startNodeId) {
@@ -109,7 +109,12 @@ function App() {
       const polylinePath: [number, number][] = data.map(node => [node.lat, node.lon]);
 
       setRoutePath(polylinePath);
-      storage.saveRoute(polylinePath);
+      storage.saveRoute({
+        path: polylinePath,
+        visitOrder:finalOrder,
+        startNodeId,
+        endNodeId
+      });
       toast.success("Route optimized!");
 
     } catch (err) {

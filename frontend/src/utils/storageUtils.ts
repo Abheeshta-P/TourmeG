@@ -1,5 +1,11 @@
-// storageUtils.ts
 import { type Node } from "../data/nodedata";
+
+type RouteParams = {
+  path: [number, number][];
+  visitOrder: number[];
+  startNodeId: number|null;
+  endNodeId: number | null;
+};
 
 const NODES_KEY = "map_nodes_data";
 const DEFAULTS_KEY = "map_default_settings";
@@ -28,13 +34,13 @@ export const storage = {
     return saved ? JSON.parse(saved) : { tasks: [], effort: {} };
   },
 
-  saveRoute: (path: [number, number][]) => {
-    localStorage.setItem(ROUTE_KEY, JSON.stringify(path));
+  saveRoute: (calculatedRouteInfo:RouteParams) => {
+    localStorage.setItem(ROUTE_KEY, JSON.stringify(calculatedRouteInfo));
   },
 
-  loadRoute: (): [number, number][] => {
+  loadRoute: (): RouteParams => {
     const saved = localStorage.getItem(ROUTE_KEY);
-    return saved ? JSON.parse(saved) : [];
+    return saved ? JSON.parse(saved) : {path:[], visitOrder:[],startNodeId:null, endNodeId:null};
   },
 
   clearRoute: () => {
