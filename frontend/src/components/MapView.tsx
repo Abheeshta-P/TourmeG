@@ -135,7 +135,6 @@ function MapClickHandler({ addMode, visitOrder, setEndNodeId, setRoutePath, setS
     setEndNodeId(null);
 
     storage.clearRoute();
-    // window.location.reload();
 
     toast('Node deleted', {
       description: `${nodeToDelete.name} removed.`,
