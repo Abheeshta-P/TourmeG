@@ -124,7 +124,9 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapVi
     const nodeToDelete = nodes.find(n => n.id === id);
     if (!nodeToDelete) return;
 
+    
     handleClearAllRouteData();
+    setNodes((prev) => prev.filter((p) => p.id !== nodeToDelete.id));
 
     toast('Node deleted', {
       description: `${nodeToDelete.name} removed.`,
