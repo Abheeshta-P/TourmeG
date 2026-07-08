@@ -68,7 +68,7 @@ Based on the project structure, the backend is organized into specialized servic
 * **`utils/`**: Helper functions for workload calculation and coordinate validation.
 
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 
 ### Prerequisites
@@ -100,7 +100,7 @@ npm run dev
 ## Screenshot
 ![TourmeG](frontend/public/tourmeg.png)
 
-### 📝 Small notes:
+### Small notes:
 
 * **NP-Hard Constraints:** To maintain performance, the application currently limits planning to 10-15 nodes.
 * **Offline First:** Transitioned from live Overpass API queries to a local "Master Graph" for faster snapping and offline reliability.
