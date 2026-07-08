@@ -3,7 +3,7 @@
 **TourmeG** is a professional, user-centric shortest-path planner designed for navigating tourist spots in Mangaluru. Unlike standard navigation tools, it combines real-world road network data with a custom **"Node Effort"** system, helping users plan efficient routes based on distance and the workload (tasks and time) at each destination.
 
 
-## 🚀 Key Features
+## Key Features
 
 * **Interactive Leaflet Map**: Add up to 10 custom nodes by clicking within a restricted Mangaluru boundary.
 * **Hybrid Path Optimization**: Combines **TSP (Traveling Salesperson Problem)** for visit order and **A*** for road-level accuracy.
@@ -13,7 +13,7 @@
 * **Backend Path Caching**: The Java backend caches A* results to minimize redundant computations across the  distance matrix.
 
 
-## 🛠 Tech Stack
+## Tech Stack
 
 | Layer | Technologies |
 | --- | --- |
@@ -23,7 +23,7 @@
 | **Storage** | Browser LocalStorage (session persistence) |
 
 
-## 🧠 Algorithmic Workflow
+## Algorithmic Workflow
 
 ### 1. Data Pre-computation
 
@@ -45,7 +45,7 @@ The `workloadWeight` ensures that a "typical" task effort is mathematically comp
 4. **Path Stitching**: Stored A* paths are stitched together and sent to the frontend as a polyline.
 
 
-## 📂 Project Structure
+## Project Structure
 
 ### Backend (`com.graph.TourmeG`)
 
