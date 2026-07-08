@@ -24,6 +24,7 @@ function App() {
   const { nodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute().path);
+  const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [visitOrder, setVisitOrder] = useState<number[]>(() => storage.loadRoute().visitOrder);
   
   const handleClearAllRouteData = () => {
@@ -37,13 +38,17 @@ function App() {
   };
 
   const handleCalculate = async () => {
-    if (!startNodeId) {
+    if (startNodeId === -1 && !userPosition) {
+      toast.error("Waiting for GPS location...");
+      return;
+    }
+    if (startNodeId === null) {
       toast.error("Start node is required");
       return;
     }
 
     // 1. Prepare the stops array with all the data the backend needs
-    const stops = nodes.map(n => {
+    let stops = nodes.map(n => {
       const effective = getEffectiveNodeData(n, defaultTasks, defaultTaskEffort);
       return {
         id: effective.id,
@@ -54,15 +59,27 @@ function App() {
     });
 
     // 2. Find the POSITION (0, 1, 2...) of the node in the array
-    const startIdx = nodes.findIndex(n => n.id === startNodeId);
+    let actualStartIdx = nodes.findIndex(n => n.id === startNodeId);
+    let actualEndIdx = endNodeId ? nodes.findIndex(n => n.id === endNodeId) : null;
 
-    // 3. Match the endNodeId to its POSITION in the array
-    const endIdx = endNodeId ? nodes.findIndex(n => n.id === endNodeId) : null;
+    if (startNodeId === -1 && userPosition) {
+      const userNode = {
+        id: -1,
+        lat: userPosition[0],
+        lon: userPosition[1],
+        totalWorkload: 0 
+      };
+      stops = [userNode, ...stops];
+      actualStartIdx = 0;
+      if (actualEndIdx !== null) {
+        actualEndIdx += 1;
+      }
+    }
 
     const payload = {
       stops: stops,
-      startIdx: startIdx,
-      endIdx: endIdx,
+      startIdx: actualStartIdx,
+      endIdx: actualEndIdx,
     };
 
     try {
@@ -87,9 +104,9 @@ function App() {
       };
 
       // 2. Map your FRONTEND nodes to the BACKEND path index
-      const orderedNodes = nodes.map(node => {
-        const nodeLat = parseFloat(String(node.position[0]));
-        const nodeLon = parseFloat(String(node.position[1]));
+      const orderedNodes = stops.map(stop => {
+        const nodeLat = parseFloat(String(stop.lat));
+        const nodeLon = parseFloat(String(stop.lon));
 
         let closestIndex = -1;
         let minDistance = Infinity;
@@ -104,7 +121,7 @@ function App() {
         });
 
         return {
-          id: node.id, // We keep the frontend ID for the visitOrder state
+          id: stop.id, // We keep the frontend ID for the visitOrder state
           pathIndex: closestIndex
         };
       });
@@ -186,6 +203,7 @@ function App() {
                   }}
                 >
                   <option value="">Select existing place</option>
+                  {userPosition && <option value="-1">Current Location (GPS)</option>}
                   {nodes.map(n => (
                     <option key={n.id} value={n.id}>
                       {n.name}
@@ -252,7 +270,7 @@ function App() {
 
       {/* Map container */}
       <div className="map-container">
-        <MapView addMode={addMode} routePath={routePath} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData}/>
+        <MapView addMode={addMode} routePath={routePath} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData} userPosition={userPosition} setUserPosition={setUserPosition}/>
       </div>
     </div>
   );

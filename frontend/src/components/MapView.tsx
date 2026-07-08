@@ -9,11 +9,16 @@ import { computeNodeWorkload } from "../utils/tspCostUtils";
 import { useNodes } from "../context/NodeContext";
 import { getNextAvailableId } from "../utils";
 
-type MapViewProps = {
+type MapClickHandlerProps = {
   addMode?: boolean;
-  routePath?: [number, number][];
   visitOrder?: number[]; 
   handleClearAllRouteData: () => void;
+};
+
+type MapViewProps = MapClickHandlerProps & {
+  routePath?: [number, number][];
+  userPosition: [number, number] | null;
+  setUserPosition: (pos: [number, number] | null) => void;
 };
 
 const SERVICE_BOUNDS = {
@@ -65,7 +70,7 @@ const userIcon = L.divIcon({
   iconAnchor: [10, 10],
 });
 
-function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapViewProps) {
+function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapClickHandlerProps) {
   const { defaultTasks, defaultTaskEffort } = useDefaultNode();
   const { nodes, setNodes } = useNodes();
 
@@ -305,10 +310,7 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapVi
   );
 }
 
-export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData }: MapViewProps) {
-  const [userPosition, setUserPosition] = useState<[number, number] | null>(
-    null,
-  );
+export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData, userPosition, setUserPosition }: MapViewProps) {
   const outOfBoundsToastRef = useRef<boolean>(false);
 
   useEffect(() => {
