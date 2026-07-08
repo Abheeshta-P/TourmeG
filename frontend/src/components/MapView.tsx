@@ -16,6 +16,13 @@ type MapViewProps = {
   handleClearAllRouteData: () => void;
 };
 
+const SERVICE_BOUNDS = {
+  minLat: 12.5500,
+  maxLat: 13.0800,
+  minLon: 74.0000,
+  maxLon: 75.6120,
+};
+
 const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) => {
   let bgColor = "#3b82f6"; // Blue
   if (isStart) bgColor = "#22c55e"; // Green
@@ -40,6 +47,23 @@ const createNumberedIcon = (number: number, isStart: boolean, isEnd: boolean) =>
     iconAnchor: [12, 12],
   });
 };
+
+const userIcon = L.divIcon({
+  html: `
+    <div style="
+      background:#2563eb;
+      width:20px;
+      height:20px;
+      border-radius:50%;
+      border:4px solid white;
+      box-shadow:0 0 10px blue;
+    ">
+    </div>
+  `,
+  className: "",
+  iconSize: [20, 20],
+  iconAnchor: [10, 10],
+});
 
 function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapViewProps) {
   const { defaultTasks, defaultTaskEffort } = useDefaultNode();
@@ -68,10 +92,7 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapVi
       let { lat, lng } = e.latlng;
 
       // 1. DEFINE YOUR RANGE (Based on your maxBounds)
-      const minLat = 12.5500;
-      const maxLat = 13.0800;
-      const minLon = 74.0000; // Your southwest lon
-      const maxLon = 75.6120; // Your northeast lon
+      const { minLat, maxLat, minLon, maxLon } = SERVICE_BOUNDS;
 
       // 2. VALIDATION CHECK
       if (lat < minLat || lat > maxLat || lng < minLon || lng > maxLon) {
@@ -285,14 +306,64 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapVi
 }
 
 export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData }: MapViewProps) {
+  const [userPosition, setUserPosition] = useState<[number, number] | null>(
+    null,
+  );
+  const outOfBoundsToastRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation not supported");
+      return;
+    }
+
+    const watchId = navigator.geolocation.watchPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setUserPosition([lat, lon]);
+
+        const { minLat, maxLat, minLon, maxLon } = SERVICE_BOUNDS;
+        const isCurrentlyOutOfBounds = lat < minLat || lat > maxLat || lon < minLon || lon > maxLon;
+
+        if (isCurrentlyOutOfBounds && !outOfBoundsToastRef.current) {
+          toast.warning("Outside Service Area", {
+            description: "You have exited the Mangaluru service area.",
+            duration: 6000,
+          });
+          outOfBoundsToastRef.current = true;
+        } else if (!isCurrentlyOutOfBounds && outOfBoundsToastRef.current) {
+          toast.success("Inside Service Area", {
+            description: "You have re-entered the Mangaluru service area.",
+            duration: 4000,
+          });
+          outOfBoundsToastRef.current = false;
+        }
+      },
+      (error) => {
+        console.error(error);
+        toast.error("Unable to get location");
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 5000,
+      },
+    );
+
+    return () => {
+      navigator.geolocation.clearWatch(watchId);
+    };
+  }, []);
+
   return (
     <MapContainer
       center={[12.87, 75.05]} // Slightly adjusted center for the new box
       zoom={11}
       style={{ height: "100%", width: "100%" }}
       maxBounds={[
-        [12.5500, 74], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
-        [13.0800, 75.6120]  // North East: Moved DOWN from 13.17 to stay below Udupi
+        [12.55, 74], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
+        [13.08, 75.612], // North East: Moved DOWN from 13.17 to stay below Udupi
       ]}
       maxBoundsViscosity={1.0}
       minZoom={10}
@@ -300,19 +371,29 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
+      {userPosition && (
+        <Marker position={userPosition} icon={userIcon}>
+          <Popup>You are here</Popup>
+        </Marker>
+      )}
+
       {routePath && routePath.length > 0 && (
         <Polyline
           positions={routePath}
           pathOptions={{
-            color: '#3b82f6',
+            color: "#3b82f6",
             weight: 5,
             opacity: 0.8,
-            dashArray: '10, 10', 
-            lineJoin: 'round'
+            dashArray: "10, 10",
+            lineJoin: "round",
           }}
         />
       )}
-      <MapClickHandler addMode={addMode} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData}/>
+      <MapClickHandler
+        addMode={addMode}
+        visitOrder={visitOrder}
+        handleClearAllRouteData={handleClearAllRouteData}
+      />
     </MapContainer>
   );
 }
