@@ -344,7 +344,9 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
       },
       (error) => {
         console.error(error);
-        toast.error("Unable to get location");
+        if (error.code !== 3) { // Ignore timeout errors, it will retry automatically
+          toast.error("Unable to get location");
+        }
       },
       {
         enableHighAccuracy: true,
