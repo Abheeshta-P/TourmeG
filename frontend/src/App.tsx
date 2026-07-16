@@ -7,7 +7,7 @@ import { computeNodeWorkload, getEffectiveNodeData } from "./utils/tspCostUtils"
 import { storage } from "./utils/storageUtils";
 import { API_ENDPOINTS } from "./config/config";
 import { useDefaultNode } from "./context/DefaultNodeContext";
-import { X, Trash2, Menu } from "lucide-react";
+import { X, Trash2, Menu, Loader2 } from "lucide-react";
 
 interface BackendNode {
   id: number;
@@ -27,6 +27,7 @@ function App() {
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute().path);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [visitOrder, setVisitOrder] = useState<number[]>(() => storage.loadRoute().visitOrder);
+  const [isCalculating, setIsCalculating] = useState(false);
   
   const handleClearAllRouteData = () => {
     const emptyState = storage.clearRoute();
@@ -82,6 +83,8 @@ function App() {
       startIdx: actualStartIdx,
       endIdx: actualEndIdx,
     };
+
+    setIsCalculating(true);
 
     try {
       toast.info("Calculating optimal route...");
@@ -153,6 +156,8 @@ function App() {
       } else {
         console.log("Unknown error", err);
       }
+    } finally {
+      setIsCalculating(false);
     }
   };
 
@@ -239,8 +244,16 @@ function App() {
                 <button
                   onClick={handleCalculate}
                   className="calculate-route"
+                  disabled={isCalculating}
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", opacity: isCalculating ? 0.7 : 1 }}
                 >
-                  Calculate Route
+                  {isCalculating ? (
+                    <>
+                      <Loader2 size={16} className="spinner" /> Calculating...
+                    </>
+                  ) : (
+                    "Calculate Route"
+                  )}
                 </button>
 
                 {routePath.length > 0 && (
