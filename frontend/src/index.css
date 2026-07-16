@@ -7,6 +7,7 @@ body,
   padding: 0;
   width: 100%;
   font-family:
+    'Inter',
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -171,7 +172,7 @@ body,
 
 .btn-save {
   padding: 8px 16px;
-  background: #4caf50;
+  background: #10b981;
   color: white;
   border: none;
   border-radius: 6px;
@@ -180,7 +181,7 @@ body,
 }
 
 .btn-save:hover {
-  background: #45a049;
+  background: #059669;
 }
 
 /* Modal entrance animation */
@@ -239,7 +240,7 @@ body,
 /* Calculate button */
 .route-config .calculate-route {
   padding: 8px;
-  background: #4caf50;
+  background: #8f0edf;
   color: white;
   border: none;
   border-radius: 6px;
@@ -251,7 +252,7 @@ body,
 }
 
 .route-config .calculate-route:hover {
-  background: #45a049;
+  background: #7d06c7;
 }
 
 .route-config .calculate-route:active {

@@ -75,7 +75,7 @@ const userIcon = L.divIcon({
       height:20px;
       border-radius:50%;
       border:4px solid white;
-      box-shadow:0 0 10px blue;
+      box-shadow:0 0 10px rgba(37, 99, 235, 0.6);
     ">
     </div>
   `,
