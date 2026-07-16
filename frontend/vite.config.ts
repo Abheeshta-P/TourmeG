@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['tourmeg_logo.png', 'tourmeg.png'],
+      includeAssets: ['tourmeg_logo.png', 'tourmeg.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
         name: 'TourmeG - Route Planner',
         short_name: 'TourmeG',
@@ -18,14 +18,16 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/tourmeg_logo.png',
+            src: '/pwa-192x192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           },
           {
-            src: '/tourmeg_logo.png',
+            src: '/pwa-512x512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any maskable'
           }
         ]
       }
