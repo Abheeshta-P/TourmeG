@@ -168,31 +168,38 @@ function App() {
       {/* Sidebar */}
       <div className={`sidebar ${sidebar ? "" : "close"}`}>
         <div className="sidebar-header">
-          <div>
-            <h1 className="name">TourmeG</h1>
-            <p className="helper-text">
-              This is the panel for default settings, applied when creating a new place
-            </p>
+          <div className="brand-title">
+            <img src="/tourmeg_logo.png" alt="TourmeG Logo" className="brand-logo" />
+            <div>
+              <h1 className="name">TourmeG</h1>
+              <p className="helper-text">Smart Route Optimizer</p>
+            </div>
           </div>
           <button className="close-btn" onClick={() => setSideBar(false)}>
-            <X size={24} />
+            <X size={16} />
           </button>
         </div>
-        <Configuration />
+        <div className="sidebar-card">
+          <Configuration />
+          <p className="helper-text" style={{ marginTop: "8px" }}>
+            This is the panel for default settings, applied when creating a new place.
+          </p>
+        </div>
 
-        <hr />
-
-        <h2>Actions</h2>
-        <button onClick={() => setAddMode(!addMode)}>
-          {addMode ? "Exit Add Mode" : "Add Place Mode"}
-        </button>
-
-        <button onClick={() => setShowRouteConfig(!showRouteConfig)}>
-          {showRouteConfig ? "Close Route Config" : "Configure Route"}
-        </button>
+        <div className="actions-section">
+          <div className="action-buttons">
+            <button className={`primary-btn ${addMode ? "active-mode-btn" : ""}`} onClick={() => setAddMode(!addMode)}>
+              {addMode ? "Exit Add Mode" : "Add Place Mode"}
+            </button>
+            
+            <button className="secondary-btn" onClick={() => setShowRouteConfig(!showRouteConfig)}>
+              {showRouteConfig ? "Close Route Config" : "Configure Route"}
+            </button>
+          </div>
+        </div>
 
         {showRouteConfig && (
-          <>
+          <div className="sidebar-card">
             <div className="route-config">
 
               <div>
@@ -265,13 +272,13 @@ function App() {
                     className="clear-route"
                     title="Remove the route"
                   >
-                    <Trash2 size={20} />
+                    <Trash2 size={16} />
                   </button>
                 )}
               </div>
 
             </div>
-          </>
+          </div>
         )}
       </div>
 
@@ -283,7 +290,7 @@ function App() {
       )}
 
       {/* Map container */}
-      <div className="map-container">
+      <div className={`map-container ${addMode ? "map-add-mode" : ""}`}>
         <MapView addMode={addMode} routePath={routePath} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData} userPosition={userPosition} setUserPosition={setUserPosition}/>
       </div>
     </div>

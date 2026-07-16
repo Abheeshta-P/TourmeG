@@ -32,42 +32,134 @@ body,
 
 .sidebar {
   width: 280px;
-  padding-inline: 10px;
-  padding-block: 8px;
+  padding: 10px;
   margin: 0;
-  background: #f8f9fa;
+  background: #f8fafc; /* Professional SaaS background */
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  border-right: 1px solid #ddd;
+  gap: 10px;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.sidebar h2 {
-  margin: 0;
-  font-size: 18px;
-}
+
 
 .helper-text {
-  font-size: 12px;
-  color: #666;
-  margin-block: 0px;
+  font-size: clamp(9.5px, 1.5vw, 11px);
+  color: #64748b;
+  margin-top: 2px;
+  margin-bottom: 0px;
+  line-height: 1.3;
 }
 
-.sidebar button {
+.brand-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
+.name {
+  font-size: clamp(18px, 3.5vw, 20px);
+  font-weight: 700;
+  margin: 0;
+  color: #1e293b;
+}
+
+.primary-btn {
   padding: 8px;
   border: none;
   background: #8f0edf;
   color: white;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  font-weight: 500;
+  width: 100%;
+  transition: background 0.2s ease;
 }
 
-.sidebar button:hover {
+.primary-btn:hover {
   background: #7d06c7;
+}
+
+.secondary-btn {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #334155;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.sidebar-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  margin-block: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-direction: row;
+}
+
+.action-buttons button {
+  flex: 1;
+  font-size: clamp(10px, 1.8vw, 12px);
+  padding: 6px;
 }
 
 .map-container {
   flex: 1;
+  position: relative;
+}
+
+/* Active Map Mode Visual Cues */
+.map-add-mode {
+  outline: 4px solid #8f0edf;
+  outline-offset: -4px;
+}
+
+.map-add-mode .leaflet-container,
+.map-add-mode .leaflet-interactive {
+  cursor: crosshair !important;
+}
+
+.active-mode-btn {
+  background-color: #ef4444 !important;
+  animation: pulse-border 2s infinite;
+}
+
+.active-mode-btn:hover {
+  background-color: #dc2626 !important;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 .close {
@@ -78,19 +170,45 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 4px;
 }
 
 .close-btn {
-  background: none;
+  background: transparent;
   border: none;
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
   cursor: pointer;
-  color: #555;
+  color: #64748b;
+  transition: all 0.2s ease;
 }
 
-.sidebar-header .close-btn:hover {
-  background-color: red;
-  color: white;
+.close-btn:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
+}
+
+.clear-route {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clear-route:hover {
+  background-color: #fee2e2;
+  color: #ef4444;
 }
 
 .sidebar {
@@ -203,10 +321,7 @@ body,
 }
 
 .route-config h3 {
-  font-size: 14px;
-  margin-bottom: 6px;
-  font-weight: 600;
-  color: #333;
+  /* Now handled by shared rule below, but keeping it empty to avoid breakages if needed later */
 }
 
 .route-config > div {
@@ -225,16 +340,20 @@ body,
 /* Make select flexible */
 .route-config select {
   flex: 1;
-  padding: 6px 5px;
+  padding: 8px 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 13px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8fafc;
+  font-size: clamp(11px, 2vw, 13px);
   outline: none;
-  transition: border 0.2s ease;
+  color: #334155;
+  transition: all 0.2s ease;
 }
 
 .route-config select:focus {
-  border-color: #7d06c7;
+  border-color: #8f0edf;
+  outline: 2px solid rgba(143, 14, 223, 0.2);
+  background-color: #ffffff;
 }
 
 /* Calculate button */
@@ -245,6 +364,7 @@ body,
   border: none;
   border-radius: 6px;
   font-weight: 600;
+  font-size: clamp(11px, 2vw, 13px);
   cursor: pointer;
   transition:
     background 0.2s ease,
@@ -266,8 +386,14 @@ body,
   gap: 8px;
 }
 
+.card-title,
+.route-config h3,
 .config-title {
   margin: 0;
+  margin-bottom: 8px;
+  font-size: clamp(11px, 2vw, 13px);
+  font-weight: 600;
+  color: #334155;
 }
 
 .task-row {
@@ -276,12 +402,21 @@ body,
   gap: 8px;
 }
 
+.task-row input[type="checkbox"] {
+  accent-color: #8f0edf;
+  cursor: pointer;
+}
+
 .task-name {
   flex: 1;
+  font-size: clamp(10px, 1.8vw, 12px);
+  color: #475569;
 }
 
 .task-effort {
-  width: 50px;
+  width: 45px;
+  font-size: clamp(9px, 1.5vw, 11px);
+  padding: 2px 4px;
 }
 
 /* app main */
@@ -347,30 +482,11 @@ body,
     max-width: 90vw;
   }
 
-  .route-config select {
-    font-size: 10px;
-  }
-  .route-config h3 {
-    font-size: 10px;
-  }
   .modal-title {
     font-size: 1.1rem;
   }
   .close-btn {
-    font-size: 10px;
-  }
-  .sidebar h1 {
-    font-size: 25px;
-  }
-  .helper-text {
-    font-size: 11px;
-  }
-  .config-title {
-    font-size: 15px;
-  }
-  .task-effort,
-  .task-name {
-    font-size: 12px;
+    padding: 4px;
   }
   .task-row {
     gap: 3px;
@@ -378,9 +494,8 @@ body,
   .config-container {
     gap: 5px;
   }
-  .sidebar button {
-    font-size: 11px;
-    padding: 6px;
+  .primary-btn, .secondary-btn {
+    padding: 8px;
   }
 }
 
