@@ -4,6 +4,9 @@ import App from './App.tsx'
 import 'leaflet/dist/leaflet.css';
 import { DefaultNodeProvider } from './context/DefaultNodeProvider.tsx';
 import { NodeProvider } from './context/NodeContextProvider.tsx';
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW({ immediate: true })
 
 
 createRoot(document.getElementById('root')!).render(
