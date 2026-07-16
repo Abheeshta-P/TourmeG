@@ -7,6 +7,7 @@ import { computeNodeWorkload, getEffectiveNodeData } from "./utils/tspCostUtils"
 import { storage } from "./utils/storageUtils";
 import { API_ENDPOINTS } from "./config/config";
 import { useDefaultNode } from "./context/DefaultNodeContext";
+import { X, Trash2, Menu } from "lucide-react";
 
 interface BackendNode {
   id: number;
@@ -169,7 +170,7 @@ function App() {
             </p>
           </div>
           <button className="close-btn" onClick={() => setSideBar(false)}>
-            ✕
+            <X size={24} />
           </button>
         </div>
         <Configuration />
@@ -251,7 +252,7 @@ function App() {
                     className="clear-route"
                     title="Remove the route"
                   >
-                    🗑️
+                    <Trash2 size={20} />
                   </button>
                 )}
               </div>
@@ -264,7 +265,7 @@ function App() {
       {/* Open sidebar button */}
       {!sidebar && (
         <button className="open-btn" onClick={() => setSideBar(true)}>
-          ☰
+          <Menu size={24} />
         </button>
       )}
 

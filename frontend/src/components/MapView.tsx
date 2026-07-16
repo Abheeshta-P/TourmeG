@@ -12,6 +12,7 @@ import { getNextAvailableId } from "../utils";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { LocateFixed } from "lucide-react";
 
 // Fix for React-Leaflet icons not showing up in Vite production builds
 // @ts-ignore
@@ -326,13 +327,24 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapCl
 export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData, userPosition, setUserPosition }: MapViewProps) {
   const outOfBoundsToastRef = useRef<boolean>(false);
 
-  useEffect(() => {
+  const [isTracking, setIsTracking] = useState(false);
+  const watchIdRef = useRef<number | null>(null);
+
+  const startTracking = () => {
     if (!navigator.geolocation) {
       toast.error("Geolocation not supported");
       return;
     }
 
-    const watchId = navigator.geolocation.watchPosition(
+    if (isTracking) {
+      toast.info("Already tracking location");
+      return;
+    }
+
+    setIsTracking(true);
+    toast.info("Requesting location access...");
+
+    watchIdRef.current = navigator.geolocation.watchPosition(
       (position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
@@ -359,6 +371,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
         console.error(error);
         if (error.code !== 3) { // Ignore timeout errors, it will retry automatically
           toast.error("Unable to get location");
+          setIsTracking(false);
         }
       },
       {
@@ -367,50 +380,81 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
         timeout: 5000,
       },
     );
+  };
 
+  useEffect(() => {
     return () => {
-      navigator.geolocation.clearWatch(watchId);
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
     };
   }, []);
 
   return (
-    <MapContainer
-      center={[12.87, 75.05]} // Slightly adjusted center for the new box
-      zoom={11}
-      style={{ height: "100%", width: "100%" }}
-      maxBounds={[
-        [12.55, 74], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
-        [13.08, 75.612], // North East: Moved DOWN from 13.17 to stay below Udupi
-      ]}
-      maxBoundsViscosity={1.0}
-      minZoom={10}
-      maxZoom={18}
-    >
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-      {userPosition && (
-        <Marker position={userPosition} icon={userIcon}>
-          <Popup>You are here</Popup>
-        </Marker>
-      )}
-
-      {routePath && routePath.length > 0 && (
-        <Polyline
-          positions={routePath}
-          pathOptions={{
-            color: "#3b82f6",
-            weight: 5,
-            opacity: 0.8,
-            dashArray: "10, 10",
-            lineJoin: "round",
+    <div style={{ position: "relative", height: "100%", width: "100%" }}>
+      {!isTracking && (
+        <button
+          onClick={startTracking}
+          style={{
+            position: "absolute",
+            bottom: "20px",
+            right: "20px",
+            zIndex: 1000,
+            backgroundColor: "#2563eb",
+            color: "white",
+            padding: "10px 16px",
+            borderRadius: "50px",
+            border: "none",
+            cursor: "pointer",
+            fontWeight: "bold",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px"
           }}
-        />
+        >
+          <LocateFixed size={18} /> Locate Me
+        </button>
       )}
-      <MapClickHandler
-        addMode={addMode}
-        visitOrder={visitOrder}
-        handleClearAllRouteData={handleClearAllRouteData}
-      />
-    </MapContainer>
+      
+      <MapContainer
+        center={[12.87, 75.05]} // Slightly adjusted center for the new box
+        zoom={11}
+        style={{ height: "100%", width: "100%" }}
+        maxBounds={[
+          [12.55, 74], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
+          [13.08, 75.612], // North East: Moved DOWN from 13.17 to stay below Udupi
+        ]}
+        maxBoundsViscosity={1.0}
+        minZoom={10}
+        maxZoom={18}
+      >
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+        {userPosition && (
+          <Marker position={userPosition} icon={userIcon}>
+            <Popup>You are here</Popup>
+          </Marker>
+        )}
+
+        {routePath && routePath.length > 0 && (
+          <Polyline
+            positions={routePath}
+            pathOptions={{
+              color: "#3b82f6",
+              weight: 5,
+              opacity: 0.8,
+              dashArray: "10, 10",
+              lineJoin: "round",
+            }}
+          />
+        )}
+        <MapClickHandler
+          addMode={addMode}
+          visitOrder={visitOrder}
+          handleClearAllRouteData={handleClearAllRouteData}
+        />
+      </MapContainer>
+    </div>
   );
 }
