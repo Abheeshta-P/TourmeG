@@ -172,7 +172,7 @@ function App() {
             <img src="/tourmeg_logo.png" alt="TourmeG Logo" className="brand-logo" />
             <div>
               <h1 className="name">TourmeG</h1>
-              <p className="helper-text">Smart Route Optimizer</p>
+              <p className="helper-text">Smart Router • Mangaluru Region</p>
             </div>
           </div>
           <button className="close-btn" onClick={() => setSideBar(false)}>
@@ -188,8 +188,17 @@ function App() {
 
         <div className="actions-section">
           <div className="action-buttons">
-            <button className={`primary-btn ${addMode ? "active-mode-btn" : ""}`} onClick={() => setAddMode(!addMode)}>
-              {addMode ? "Exit Add Mode" : "Add Place Mode"}
+            <button 
+              className={`primary-btn ${addMode ? "active-mode-btn" : ""}`} 
+              onClick={() => setAddMode(!addMode)}
+              disabled={nodes.length >= 10 && !addMode}
+            >
+              {nodes.length >= 10 && !addMode 
+                ? `Max Places (10/10)` 
+                : addMode 
+                  ? `Exit Add Mode (${nodes.length}/10)` 
+                  : `Add Place (${nodes.length}/10)`
+              }
             </button>
             
             <button className="secondary-btn" onClick={() => setShowRouteConfig(!showRouteConfig)}>
