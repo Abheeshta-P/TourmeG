@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import MapView from "./components/MapView";
 import Configuration from "./components/Configuration";
 import { toast, Toaster } from "sonner";
 import { useNodes } from "./context/NodeContext";
 import { computeNodeWorkload, getEffectiveNodeData } from "./utils/tspCostUtils";
 import { storage } from "./utils/storageUtils";
+import { getDistanceInMeters } from "./utils/geoUtils";
 import { API_ENDPOINTS } from "./config/config";
 import { useDefaultNode } from "./context/DefaultNodeContext";
-import { X, Trash2, Menu, Loader2 } from "lucide-react";
+import { X, Trash2, Menu, Loader2, CheckCircle2, Navigation, MapPin, ChevronUp, ChevronDown } from "lucide-react";
 
 interface BackendNode {
   id: number;
@@ -28,6 +29,8 @@ function App() {
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
   const [visitOrder, setVisitOrder] = useState<number[]>(() => storage.loadRoute().visitOrder);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isDrawerExpanded, setIsDrawerExpanded] = useState(true);
   
   const handleClearAllRouteData = () => {
     const emptyState = storage.clearRoute();
@@ -37,6 +40,8 @@ function App() {
     setVisitOrder(emptyState.visitOrder);
     setStartNodeId(emptyState.startNodeId);
     setEndNodeId(emptyState.endNodeId);
+    setCurrentStepIndex(0);
+    setIsDrawerExpanded(true);
   };
 
   const handleCalculate = async () => {
@@ -136,6 +141,8 @@ function App() {
         .map(item => item.id); // This is now a list of FRONTEND IDs in visit order
 
       setVisitOrder(finalOrder);
+      setCurrentStepIndex(0);
+      setIsDrawerExpanded(true);
 
       // 4. Map the data for Leaflet [lat, lon]
       const polylinePath: [number, number][] = data.map(node => [node.lat, node.lon]);
@@ -161,6 +168,26 @@ function App() {
     }
   };
 
+
+  useEffect(() => {
+    if (!userPosition || visitOrder.length === 0 || currentStepIndex >= visitOrder.length) return;
+
+    const targetNodeId = visitOrder[currentStepIndex];
+    const targetNode = nodes.find(n => n.id === targetNodeId);
+    
+    if (targetNode) {
+      const distance = getDistanceInMeters(
+        userPosition[0], userPosition[1],
+        targetNode.position[0], targetNode.position[1]
+      );
+      
+      // If within 50 meters, automatically mark as arrived and progress
+      if (distance < 50) {
+        toast.success(`Arrived at ${targetNode.name}!`);
+        setCurrentStepIndex(prev => prev + 1);
+      }
+    }
+  }, [userPosition, visitOrder, currentStepIndex, nodes]);
 
   return (
     <div className="main">
@@ -320,6 +347,60 @@ function App() {
       <div className={`map-container ${addMode ? "map-add-mode" : ""}`}>
         <MapView addMode={addMode} routePath={routePath} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData} userPosition={userPosition} setUserPosition={setUserPosition}/>
       </div>
+
+      {/* Navigation Drawer */}
+      {visitOrder.length > 0 && currentStepIndex < visitOrder.length && (
+        <div className={`navigation-drawer ${isDrawerExpanded ? 'expanded' : 'collapsed'}`}>
+          <div 
+            className="drawer-header" 
+            onClick={() => setIsDrawerExpanded(!isDrawerExpanded)}
+            style={{ cursor: 'pointer' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <h3>Navigation</h3>
+              <span className="step-counter">{currentStepIndex + 1} / {visitOrder.length} Places</span>
+            </div>
+            <button className="drawer-toggle-btn" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}>
+              {isDrawerExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
+            </button>
+          </div>
+          
+          {isDrawerExpanded && (
+            <div className="drawer-content">
+              {visitOrder.slice(currentStepIndex, currentStepIndex + 3).map((nodeId, idx) => {
+                const node = nodes.find(n => n.id === nodeId);
+                if (!node) return null;
+                
+                const isCurrent = idx === 0;
+                
+                return (
+                  <div key={nodeId} className={`nav-step ${isCurrent ? 'current' : 'upcoming'}`}>
+                    <div className="step-icon">
+                      {isCurrent ? <Navigation size={18} /> : <MapPin size={16} />}
+                    </div>
+                    <div className="step-details">
+                      <h4>{node.name}</h4>
+                      <p>{isCurrent ? 'Next Destination' : 'Upcoming Stop'}</p>
+                    </div>
+                    {isCurrent && (
+                      <button 
+                        className="mark-done-btn" 
+                        onClick={(e) => {
+                          e.stopPropagation(); // prevent collapsing drawer
+                          setCurrentStepIndex(prev => prev + 1);
+                        }}
+                        title="Mark as visited manually"
+                      >
+                        <CheckCircle2 size={24} />
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
