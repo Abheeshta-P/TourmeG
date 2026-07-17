@@ -22,7 +22,7 @@ function App() {
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
   const [startNodeId, setStartNodeId] = useState<number | null>(()=>storage.loadRoute().startNodeId || null);
   const [endNodeId, setEndNodeId] = useState<number | null>(() => storage.loadRoute().endNodeId || null);
-  const { nodes } = useNodes();
+  const { nodes, setNodes } = useNodes();
   const { defaultTaskEffort, defaultTasks } = useDefaultNode();
   const [routePath, setRoutePath] = useState<[number, number][]>(() => storage.loadRoute().path);
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null);
@@ -196,14 +196,30 @@ function App() {
               {nodes.length >= 10 && !addMode 
                 ? `Max Places (10/10)` 
                 : addMode 
-                  ? `Exit Add Mode (${nodes.length}/10)` 
+                  ? `Done (${nodes.length}/10)` 
                   : `Add Place (${nodes.length}/10)`
               }
             </button>
-            
+
             <button className="secondary-btn" onClick={() => setShowRouteConfig(!showRouteConfig)}>
-              {showRouteConfig ? "Close Route Config" : "Configure Route"}
+              {showRouteConfig ? "Close Config" : "Configure Route"}
             </button>
+
+            {nodes.length > 0 && (
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to delete all places? This cannot be undone.")) {
+                    setNodes([]);
+                    handleClearAllRouteData();
+                    toast.success("All places removed");
+                  }
+                }}
+                className="danger-btn danger-icon-btn"
+                title="Delete All Places"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
           </div>
         </div>
 
@@ -275,8 +291,10 @@ function App() {
                 {routePath.length > 0 && (
                   <button
                     onClick={() => {
-                      handleClearAllRouteData();
-                      toast.info("Route cleared");
+                      if (window.confirm("Are you sure you want to clear the calculated route?")) {
+                        handleClearAllRouteData();
+                        toast.info("Route cleared");
+                      }
                     }}
                     className="clear-route"
                     title="Remove the route"

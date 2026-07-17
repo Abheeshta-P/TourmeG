@@ -114,6 +114,44 @@ body,
   border: none;
 }
 
+.danger-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.danger-btn:hover {
+  background: #dc2626;
+}
+
+.delete-places-btn {
+  margin-top: 12px;
+  width: 100%;
+}
+
+.danger-icon-btn {
+  flex: 0 0 auto !important;
+  padding: 6px 8px !important;
+  background: transparent !important;
+  color: #ef4444 !important;
+  border: 1px solid #ef4444 !important;
+  transition: all 0.2s ease !important;
+}
+
+.danger-icon-btn:hover {
+  background: #ef4444 !important;
+  color: white !important;
+}
+
 .sidebar-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
@@ -138,6 +176,9 @@ body,
   flex: 1;
   font-size: clamp(10px, 1.8vw, 12px);
   padding: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .map-container {
@@ -453,14 +494,17 @@ body,
 }
 
 .route-buttons .clear-route {
-  background-color: #ef4444;
-  color: white;
-  padding: 0 12px;
+  background-color: transparent !important;
+  color: #ef4444 !important;
+  border: 1px solid #ef4444 !important;
+  padding: 0 8px !important;
   cursor: pointer;
+  transition: all 0.2s ease !important;
 }
 
 .route-buttons .clear-route:hover {
-  background-color: #dd1010;
+  background-color: #ef4444 !important;
+  color: white !important;
 }
 
 /* This makes the route line look like it's flowing */
