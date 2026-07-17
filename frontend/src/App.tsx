@@ -260,8 +260,8 @@ function App() {
                 <button
                   onClick={handleCalculate}
                   className="calculate-route"
-                  disabled={isCalculating}
-                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", opacity: isCalculating ? 0.7 : 1 }}
+                  disabled={isCalculating || (nodes.length + (userPosition ? 1 : 0)) < 2}
+                  title={(nodes.length + (userPosition ? 1 : 0)) < 2 ? "Add at least 2 places to route." : undefined}
                 >
                   {isCalculating ? (
                     <>

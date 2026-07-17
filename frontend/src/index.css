@@ -380,8 +380,14 @@ body,
     transform 0.1s ease;
 }
 
-.route-config .calculate-route:hover {
+.route-config .calculate-route:hover:not(:disabled) {
   background: #7d06c7;
+}
+
+.route-config .calculate-route:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #94a3b8;
 }
 
 .route-config .calculate-route:active {
