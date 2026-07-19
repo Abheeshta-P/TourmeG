@@ -591,6 +591,24 @@ body,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: pointer;
+}
+
+.drawer-title-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawer-toggle-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .drawer-header h3 {
@@ -625,7 +643,8 @@ body,
   padding: 12px;
   border-radius: 12px;
   background: #f1f5f9;
-  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-step.current {

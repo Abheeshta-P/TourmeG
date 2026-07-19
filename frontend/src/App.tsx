@@ -104,7 +104,6 @@ function App() {
 
       if (!res.ok) throw new Error("Server responded with an error");
 
-      // Inside handleCalculate in App.tsx
       const data: BackendNode[] = await res.json();
 
       // 1. Helper to calculate distance between two points (Squared is faster)
@@ -354,20 +353,19 @@ function App() {
           <div 
             className="drawer-header" 
             onClick={() => setIsDrawerExpanded(!isDrawerExpanded)}
-            style={{ cursor: 'pointer' }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div className="drawer-title-container">
               <h3>Navigation</h3>
               <span className="step-counter">{currentStepIndex + 1} / {visitOrder.length} Places</span>
             </div>
-            <button className="drawer-toggle-btn" style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: '4px' }}>
+            <button className="drawer-toggle-btn">
               {isDrawerExpanded ? <ChevronDown size={20} /> : <ChevronUp size={20} />}
             </button>
           </div>
           
           {isDrawerExpanded && (
             <div className="drawer-content">
-              {visitOrder.slice(currentStepIndex, currentStepIndex + 3).map((nodeId, idx) => {
+              {visitOrder.slice(currentStepIndex, currentStepIndex + 2).map((nodeId, idx) => {
                 const node = nodes.find(n => n.id === nodeId);
                 if (!node) return null;
                 
