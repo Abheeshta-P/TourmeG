@@ -34,6 +34,8 @@ type MapViewProps = MapClickHandlerProps & {
   routePath?: [number, number][];
   userPosition: [number, number] | null;
   setUserPosition: (pos: [number, number] | null) => void;
+  theme: MapTheme;
+  setTheme: (theme: MapTheme) => void;
 };
 
 const SERVICE_BOUNDS = {
@@ -325,8 +327,7 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapCl
   );
 }
 
-export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData, userPosition, setUserPosition }: MapViewProps) {
-  const [theme, setTheme] = useState<MapTheme>(storage.loadMapTheme());
+export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData, userPosition, setUserPosition, theme, setTheme }: MapViewProps) {
   const [showThemeMenu, setShowThemeMenu] = useState(false);
   const [isTracking, setIsTracking] = useState(false);
   const outOfBoundsToastRef = useRef<boolean>(false);

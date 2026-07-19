@@ -4,7 +4,7 @@ import Configuration from "./components/Configuration";
 import { toast, Toaster } from "sonner";
 import { useNodes } from "./context/NodeContext";
 import { computeNodeWorkload, getEffectiveNodeData } from "./utils/tspCostUtils";
-import { storage } from "./utils/storageUtils";
+import { storage, type MapTheme } from "./utils/storageUtils";
 import { getDistanceInMeters } from "./utils/geoUtils";
 import { API_ENDPOINTS } from "./config/config";
 import { useDefaultNode } from "./context/DefaultNodeContext";
@@ -18,6 +18,7 @@ interface BackendNode {
 
 
 function App() {
+  const [mapTheme, setMapTheme] = useState<MapTheme>(() => storage.loadMapTheme());
   const [sidebar, setSideBar] = useState<boolean>(true);
   const [addMode, setAddMode] = useState<boolean>(false);
   const [showRouteConfig, setShowRouteConfig] = useState<boolean>(false);
@@ -189,7 +190,7 @@ function App() {
   }, [userPosition, visitOrder, currentStepIndex, nodes]);
 
   return (
-    <div className="main">
+    <div className={`main ${mapTheme === 'dark' ? 'dark-theme' : ''}`}>
       <Toaster richColors position="top-center" />
       {/* Sidebar */}
       <div className={`sidebar ${sidebar ? "" : "close"}`}>
@@ -344,7 +345,16 @@ function App() {
 
       {/* Map container */}
       <div className={`map-container ${addMode ? "map-add-mode" : ""}`}>
-        <MapView addMode={addMode} routePath={routePath} visitOrder={visitOrder} handleClearAllRouteData={handleClearAllRouteData} userPosition={userPosition} setUserPosition={setUserPosition}/>
+        <MapView 
+          addMode={addMode} 
+          routePath={routePath} 
+          visitOrder={visitOrder} 
+          handleClearAllRouteData={handleClearAllRouteData} 
+          userPosition={userPosition} 
+          setUserPosition={setUserPosition}
+          theme={mapTheme}
+          setTheme={setMapTheme}
+        />
       </div>
 
       {/* Navigation Drawer */}

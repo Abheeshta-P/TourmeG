@@ -43,8 +43,6 @@ body,
   overflow-x: hidden;
 }
 
-
-
 .helper-text {
   font-size: clamp(9.5px, 1.5vw, 11px);
   color: #64748b;
@@ -709,7 +707,7 @@ body,
 
 .mark-done-btn:hover {
   background: rgba(16, 185, 129, 0.1);
-  transform: scale(1.1);
+  transform: scale(1);
 }
 
 @media (max-width: 800px) {
@@ -904,7 +902,7 @@ body,
 
 .mark-done-btn:hover {
   background: rgba(16, 185, 129, 0.1);
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 @media (max-width: 800px) {
@@ -999,4 +997,110 @@ body,
 .theme-menu button:hover {
   background: #f1f5f9;
   color: #0f172a;
+}
+
+/* =========================================
+   GLOBAL DARK THEME SYNC
+========================================= */
+.dark-theme {
+  color-scheme: dark;
+}
+
+.dark-theme .sidebar {
+  background: #121212;
+  border-right: 1px solid #2a2a2a;
+}
+
+.dark-theme .sidebar-header {
+  border-bottom-color: #2a2a2a;
+}
+
+.dark-theme .sidebar-card {
+  background: #1c1c1c;
+  border: 1px solid #2a2a2a;
+}
+
+.dark-theme .name,
+.dark-theme .card-title,
+.dark-theme .config-title,
+.dark-theme .route-config h3,
+.dark-theme .task-name {
+  color: #f5f5f5;
+}
+
+.dark-theme .helper-text {
+  color: #a3a3a3;
+}
+
+.dark-theme .task-row {
+  background: transparent;
+  color: #f5f5f5;
+}
+
+.dark-theme input[type="number"],
+.dark-theme input[type="text"] {
+  background-color: #121212;
+  color: #f5f5f5;
+  border-color: #2a2a2a;
+}
+
+.dark-theme .route-config select,
+.dark-theme .route-config button.btn-save {
+  background-color: #2a2a2a;
+  color: #f5f5f5;
+  border-color: #3a3a3a;
+}
+
+.dark-theme .route-config button.btn-save:hover {
+  background-color: #3a3a3a;
+}
+
+.dark-theme .drawer-header,
+.dark-theme .navigation-drawer {
+  background: #121212;
+  border-color: #2a2a2a;
+}
+
+.dark-theme .drawer-header h3,
+.dark-theme .step-details h4 {
+  color: #f5f5f5;
+}
+
+.dark-theme .step-details p {
+  color: #a3a3a3;
+}
+
+.dark-theme .nav-step {
+  background: #1c1c1c;
+}
+
+.dark-theme .nav-step.current {
+  background: rgba(143, 14, 223, 0.2);
+  border-color: rgba(143, 14, 223, 0.4);
+}
+
+.dark-theme .step-icon {
+  background: #2a2a2a;
+  color: #f5f5f5;
+  box-shadow: none;
+}
+
+.dark-theme .theme-menu,
+.dark-theme .theme-btn {
+  background: #121212;
+  border-color: #2a2a2a;
+  color: #f5f5f5;
+}
+
+.dark-theme .theme-btn svg {
+  stroke: #f5f5f5;
+}
+
+.dark-theme .theme-btn:hover,
+.dark-theme .theme-menu button:hover {
+  background: #1c1c1c;
+}
+
+.dark-theme .theme-menu button {
+  color: #f5f5f5;
 }
