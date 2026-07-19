@@ -7,9 +7,12 @@ type RouteParams = {
   endNodeId: number | null;
 };
 
+export type MapTheme = 'standard' | 'minimal' | 'dark' | 'satellite';
+
 const NODES_KEY = "map_nodes_data";
 const DEFAULTS_KEY = "map_default_settings";
 const ROUTE_KEY = "last_calculated_route";
+const THEME_KEY = "tourmeg_map_theme";
 
 export const storage = {
   // Save Nodes to LocalStorage
@@ -52,4 +55,12 @@ export const storage = {
       endNodeId: null,
     };
   },
+
+  saveMapTheme: (theme: MapTheme) => {
+    localStorage.setItem(THEME_KEY, theme);
+  },
+
+  loadMapTheme: (): MapTheme => {
+    return (localStorage.getItem(THEME_KEY) as MapTheme) || 'minimal';
+  }
 };

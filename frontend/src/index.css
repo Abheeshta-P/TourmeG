@@ -742,7 +742,261 @@ body,
     height: 28px;
   }
   
+  .task-row {
+    gap: 3px;
+  }
+  .config-container {
+    gap: 5px;
+  }
+  .primary-btn, .secondary-btn {
+    padding: 8px;
+  }
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.spinner { animation: spin 1s linear infinite; }
+
+/* Navigation Drawer */
+.navigation-drawer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 450px;
+  background: white;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from { transform: translate(-50%, 100%); }
+  to { transform: translate(-50%, 0); }
+}
+
+.drawer-header {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.drawer-title-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawer-toggle-btn {
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drawer-header h3 {
+  margin: 0;
+  font-size: clamp(11px, 2vw, 13px);
+  font-weight: 600;
+  color: #334155;
+}
+
+.step-counter {
+  font-size: clamp(9.5px, 1.5vw, 11px);
+  font-weight: 600;
+  color: #8f0edf;
+  background: rgba(143, 14, 223, 0.1);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.drawer-content {
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.nav-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-step.current {
+  background: rgba(143, 14, 223, 0.05);
+  border: 1px solid rgba(143, 14, 223, 0.2);
+}
+
+.nav-step.upcoming {
+  opacity: 0.7;
+}
+
+.step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: white;
+  color: #64748b;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.nav-step.current .step-icon {
+  background: #8f0edf;
+  color: white;
+}
+
+.step-details {
+  flex: 1;
+}
+
+.step-details h4 {
+  margin: 0 0 2px 0;
+  font-size: clamp(11px, 2vw, 13px);
+  color: #0f172a;
+}
+
+.step-details p {
+  margin: 0;
+  font-size: clamp(9.5px, 1.5vw, 11px);
+  color: #64748b;
+}
+
+.nav-step.current .step-details p {
+  color: #8f0edf;
+  font-weight: 500;
+}
+
+.mark-done-btn {
+  background: none;
+  border: none;
+  color: #10b981;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.mark-done-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  transform: scale(1.1);
+}
+
+@media (max-width: 800px) {
+  .navigation-drawer {
+    width: 70%;
+  }
+  
+  .drawer-header {
+    padding: 10px 14px;
+  }
+  
+  .step-counter {
+    padding: 3px 8px;
+  }
+  
+  .drawer-content {
+    padding: 8px 14px;
+    gap: 8px;
+    max-height: 200px;
+  }
+  
+  .nav-step {
+    padding: 8px 10px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+  
+  .step-icon {
+    width: 28px;
+    height: 28px;
+  }
+  
   .mark-done-btn {
     padding: 4px;
   }
+}
+
+/* Theme Selector UI (Map Layers) */
+.theme-selector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-btn {
+  background: white;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+  background: #f8fafc;
+}
+
+.theme-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 5px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.theme-menu button {
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  transition: background 0.2s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.theme-menu button:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }

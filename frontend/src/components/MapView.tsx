@@ -12,7 +12,8 @@ import { getNextAvailableId } from "../utils";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
-import { LocateFixed } from "lucide-react";
+import { LocateFixed, Layers, Map, Moon, Globe, LayoutTemplate } from "lucide-react";
+import { storage, type MapTheme } from "../utils/storageUtils";
 
 // Fix for React-Leaflet icons not showing up in Vite production builds
 // @ts-ignore
@@ -325,9 +326,11 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapCl
 }
 
 export default function MapView({ addMode, routePath, visitOrder, handleClearAllRouteData, userPosition, setUserPosition }: MapViewProps) {
+  const [theme, setTheme] = useState<MapTheme>(storage.loadMapTheme());
+  const [showThemeMenu, setShowThemeMenu] = useState(false);
+  const [isTracking, setIsTracking] = useState(false);
   const outOfBoundsToastRef = useRef<boolean>(false);
 
-  const [isTracking, setIsTracking] = useState(false);
   const watchIdRef = useRef<number | null>(null);
 
   const startTracking = () => {
@@ -390,8 +393,46 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
     };
   }, []);
 
+  const getTileLayer = () => {
+    switch (theme) {
+      case 'dark':
+        return <TileLayer attribution='&copy; CARTO' url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />;
+      case 'satellite':
+        return <TileLayer attribution='&copy; Esri' url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />;
+      case 'minimal':
+        return <TileLayer attribution='&copy; CARTO' url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />;
+      default:
+        return <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />;
+    }
+  };
+
+  const updateTheme = (newTheme: MapTheme) => {
+    setTheme(newTheme);
+    storage.saveMapTheme(newTheme);
+    setShowThemeMenu(false);
+  };
+
   return (
     <div style={{ position: "relative", height: "100%", width: "100%" }}>
+      {/* Theme Selector UI */}
+      <div className="theme-selector">
+        <button 
+          className="theme-btn"
+          onClick={() => setShowThemeMenu(!showThemeMenu)}
+          title="Map Layers"
+        >
+          <Layers size={20} color="#334155" />
+        </button>
+        {showThemeMenu && (
+          <div className="theme-menu">
+            <button onClick={() => updateTheme('standard')}><Map size={16} /> Standard</button>
+            <button onClick={() => updateTheme('minimal')}><LayoutTemplate size={16} /> Minimal</button>
+            <button onClick={() => updateTheme('dark')}><Moon size={16} /> Dark Mode</button>
+            <button onClick={() => updateTheme('satellite')}><Globe size={16} /> Satellite</button>
+          </div>
+        )}
+      </div>
+
       {!isTracking && (
         <button
           onClick={startTracking}
@@ -429,7 +470,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
         minZoom={10}
         maxZoom={18}
       >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        {getTileLayer()}
 
         {userPosition && (
           <Marker position={userPosition} icon={userIcon}>
