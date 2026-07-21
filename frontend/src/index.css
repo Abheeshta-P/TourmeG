@@ -24,6 +24,7 @@ body,
 .main {
   display: flex;
   height: 100vh;
+  overflow: hidden;
 }
 
 .name {
@@ -32,8 +33,10 @@ body,
 
 .sidebar {
   width: 280px;
+  min-width: 280px;
   padding: 10px;
   margin: 0;
+  margin-left: 0;
   background: #f8fafc; /* Professional SaaS background */
   display: flex;
   flex-direction: column;
@@ -41,6 +44,7 @@ body,
   border-right: 1px solid #e2e8f0;
   overflow-y: auto;
   overflow-x: hidden;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .helper-text {
@@ -274,7 +278,7 @@ body,
   left: 20px;
   bottom: 20px;
   z-index: 1000;
-  padding: 8px 12px;
+  padding: 7px;
 }
 
 /* The semi-transparent background */
@@ -1128,6 +1132,93 @@ body,
 }
 
 /* =========================================
+   REPLACED INLINE STYLES
+========================================= */
+.helper-text-spaced {
+  margin-top: 8px;
+}
+
+.modal-label-spaced {
+  margin-top: 10px; 
+  display: block;
+}
+
+.map-wrapper, .map-container-layer {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.locate-me-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.locate-me-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.popup-container {
+  min-width: 150px;
+}
+
+.popup-title {
+  margin-bottom: 5px; 
+  display: block; 
+  width: 100%;
+}
+
+.popup-type {
+  margin: 2px 0;
+}
+
+.popup-divider {
+  margin: 8px 0;
+}
+
+.popup-actions {
+  display: flex; 
+  justify-content: space-between; 
+  gap: 5px;
+}
+
+.popup-btn {
+  cursor: pointer; 
+  padding: 2px 5px;
+  background: none;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+}
+
+.popup-btn:hover {
+  background: #f8fafc;
+}
+
+.popup-btn-delete {
+  color: red;
+  border-color: #fca5a5;
+}
+
+.popup-btn-delete:hover {
+  background: #fef2f2;
+}
+
+/* =========================================
    GLOBAL DARK THEME SYNC
 ========================================= */
 .dark-theme {
@@ -1262,4 +1353,23 @@ body,
 
 .dark-theme .result-address {
   color: #a3a3a3;
+}
+
+/* Dark Theme overrides for Popup Buttons */
+.dark-theme .popup-btn {
+  border-color: #3a3a3a;
+  color: #f5f5f5;
+}
+
+.dark-theme .popup-btn:hover {
+  background: #2a2a2a;
+}
+
+.dark-theme .popup-btn-delete {
+  color: #ef4444;
+  border-color: #7f1d1d;
+}
+
+.dark-theme .popup-btn-delete:hover {
+  background: #450a0a;
 }

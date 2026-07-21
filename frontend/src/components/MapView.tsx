@@ -230,44 +230,44 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapCl
             icon={isNumbered ? customIcon : new L.Icon.Default()}
           >
             <Popup key={`${node.id}-${node.tasks.join(',')}`}>
-            <div style={{ minWidth: '150px' }}>
-                <p style={{ marginBottom: '5px', display: 'block', width: '100%' }}> <strong>{isNumbered ? `Step ${orderIdx + 1}: ` : ""}{node.name}</strong></p>
-              <p style={{ margin: '2px 0' }}>Type: {node.type}</p>
+              <div className="popup-container">
+                <p className="popup-title"> <strong>{isNumbered ? `Step ${orderIdx + 1}: ` : ""}{node.name}</strong></p>
+                <p className="popup-type">Type: {node.type}</p>
 
-              <hr style={{ margin: '8px 0' }} />
+                <hr className="popup-divider" />
 
-              {/* BUTTONS SECTION */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '5px' }}>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevents map click
-                    setEditingNode({
-                      ...node,
-                      tasks: node.tasks?.length ? [...node.tasks] : [...defaultTasks],
-                      effort: Object.keys(node.effort || {}).length
-                        ? { ...node.effort }
-                        : { ...defaultTaskEffort },
-                    });
+                {/* BUTTONS SECTION */}
+                <div className="popup-actions">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevents map click
+                      setEditingNode({
+                        ...node,
+                        tasks: node.tasks?.length ? [...node.tasks] : [...defaultTasks],
+                        effort: Object.keys(node.effort || {}).length
+                          ? { ...node.effort }
+                          : { ...defaultTaskEffort },
+                      });
 
-                  }}
-                  style={{ cursor: 'pointer', padding: '2px 5px' }}
-                >
-                  ⚙️ Config
-                </button>
+                    }}
+                    className="popup-btn"
+                  >
+                    ⚙️ Config
+                  </button>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation(); // Prevents map click
-                    deleteNode(node.id);
-                  }}
-                  style={{ cursor: 'pointer', padding: '2px 5px', color: 'red' }}
-                >
-                  🗑️ Delete
-                </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevents map click
+                      deleteNode(node.id);
+                    }}
+                    className="popup-btn popup-btn-delete"
+                  >
+                    🗑️ Delete
+                  </button>
+                </div>
               </div>
-            </div>
-          </Popup>
-        </Marker>
+            </Popup>
+          </Marker>
         );
       })}
 
@@ -289,7 +289,7 @@ function MapClickHandler({ addMode, visitOrder, handleClearAllRouteData }: MapCl
                 onChange={(e) => setEditingNode({ ...editingNode, name: e.target.value })}
               />
 
-              <label style={{ marginTop: '10px', display: 'block' }}>Difficulty (0-10)</label>
+              <label className="modal-label-spaced">Difficulty (0-10)</label>
               <input
                 type="number"
                 value={computeNodeWorkload(editingNode)}
@@ -415,7 +415,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
   };
 
   return (
-    <div style={{ position: "relative", height: "100%", width: "100%" }}>
+    <div className="map-wrapper">
       {/* Theme Selector UI */}
       <div className="theme-selector">
         <button 
@@ -438,23 +438,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
       {!isTracking && (
         <button
           onClick={startTracking}
-          style={{
-            position: "absolute",
-            bottom: "20px",
-            right: "20px",
-            zIndex: 1000,
-            backgroundColor: "#2563eb",
-            color: "white",
-            padding: "10px 16px",
-            borderRadius: "50px",
-            border: "none",
-            cursor: "pointer",
-            fontWeight: "bold",
-            boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px"
-          }}
+          className="locate-me-btn"
         >
           <LocateFixed size={18} /> Locate Me
         </button>
@@ -463,7 +447,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
       <MapContainer
         center={[12.87, 75.05]} // Slightly adjusted center for the new box
         zoom={11}
-        style={{ height: "100%", width: "100%" }}
+        className="map-container-layer"
         maxBounds={[
           [12.55, 74], // South West: Moved UP from 12.51 to stay in Karnataka/Mangaluru
           [13.08, 75.612], // North East: Moved DOWN from 13.17 to stay below Udupi

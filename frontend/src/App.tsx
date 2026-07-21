@@ -208,7 +208,7 @@ function App() {
         </div>
         <div className="sidebar-card">
           <Configuration />
-          <p className="helper-text" style={{ marginTop: "8px" }}>
+          <p className="helper-text helper-text-spaced">
             This is the panel for default settings, applied when creating a new place.
           </p>
         </div>
@@ -339,7 +339,7 @@ function App() {
       {/* Open sidebar button */}
       {!sidebar && (
         <button className="open-btn" onClick={() => setSideBar(true)}>
-          <Menu size={24} />
+          <Menu size={22} />
         </button>
       )}
 
