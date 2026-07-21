@@ -1,3 +1,6 @@
+/* =========================================
+   CSS VARIABLES & GLOBAL RESETS
+========================================= */
 :root {
   --slate-50: #f8fafc;
   --slate-100: #f1f5f9;
@@ -67,25 +70,9 @@ body,
   overflow: hidden;
 }
 
-.name {
-  margin: 0;
-}
-
-.sidebar {
-  width: 280px;
-  min-width: 280px;
-  padding: 10px;
-  margin: 0;
-  margin-left: 0;
-  background: var(--slate-50); /* Professional SaaS background */
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-right: 1px solid var(--slate-200);
-  overflow-y: auto;
-  overflow-x: hidden;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/* =========================================
+   TYPOGRAPHY & UTILITIES
+========================================= */
 
 .helper-text {
   font-size: clamp(9.5px, 1.5vw, 11px);
@@ -114,6 +101,36 @@ body,
   color: var(--slate-800);
 }
 
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.spinner { animation: spin 1s linear infinite; }
+
+/* Modal entrance animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.helper-text-spaced {
+  margin-top: 8px;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
 .primary-btn {
   padding: 8px;
   border: none;
@@ -194,51 +211,6 @@ body,
   color: white !important;
 }
 
-.sidebar-card {
-  background: var(--white);
-  border: 1px solid var(--slate-200);
-  border-radius: 8px;
-  padding: 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-}
-
-.actions-section {
-  display: flex;
-  flex-direction: column;
-  margin-block: 4px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 6px;
-  flex-direction: row;
-}
-
-.action-buttons button {
-  flex: 1;
-  font-size: clamp(10px, 1.8vw, 12px);
-  padding: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.map-container {
-  flex: 1;
-  position: relative;
-}
-
-/* Active Map Mode Visual Cues */
-.map-add-mode {
-  outline: 4px solid var(--primary);
-  outline-offset: -4px;
-}
-
-.map-add-mode .leaflet-container,
-.map-add-mode .leaflet-interactive {
-  cursor: crosshair !important;
-}
-
 .active-mode-btn {
   background-color: var(--red-500) !important;
   animation: pulse-border 2s infinite;
@@ -246,25 +218,6 @@ body,
 
 .active-mode-btn:hover {
   background-color: var(--red-600) !important;
-}
-
-@keyframes pulse-border {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
-  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-
-.close {
-  /* display: none removed so the margin-left animation works! */
-}
-
-.sidebar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--slate-200);
-  margin-bottom: 4px;
 }
 
 .close-btn {
@@ -284,37 +237,6 @@ body,
   background-color: var(--red-100);
   color: var(--red-500);
 }
-
-.clear-route {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  border: none;
-  border-radius: 6px;
-  background-color: transparent;
-  color: var(--slate-500);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.clear-route:hover {
-  background-color: var(--red-100);
-  color: var(--red-500);
-}
-
-.sidebar {
-  width: 280px;
-  min-width: 280px;
-  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.sidebar.close {
-  margin-left: -300px;
-}
-
-
-
 
 /* Redesigned as a vertical left-centered pull tab */
 .open-btn {
@@ -340,52 +262,6 @@ body,
 .open-btn:hover {
   background: var(--slate-50);
   padding-left: 10px; /* Slight pull effect on hover */
-}
-
-/* The semi-transparent background */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(2px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  cursor: not-allowed;
-}
-
-.modal-content {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  width: 350px;
-  max-width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  animation: fadeIn 0.2s ease-out;
-  cursor: auto;
-}
-
-.modal-title {
-  margin: 0 0 16px 0;
-  font-size: 1.25rem;
-  color: var(--gray-800);
-}
-
-.modal-divider {
-  margin: 20px 0;
-  border: 0;
-  border-top: 1px solid var(--gray-200);
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
 }
 
 .btn-cancel {
@@ -415,16 +291,90 @@ body,
   background: var(--emerald-600);
 }
 
-/* Modal entrance animation */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.mark-done-btn {
+  background: none;
+  border: none;
+  color: var(--emerald-500);
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.mark-done-btn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  transform: scale(1);
+}
+
+/* =========================================
+   SIDEBAR & LAYOUT
+========================================= */
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+  padding: 10px;
+  margin: 0;
+  margin-left: 0;
+  background: var(--slate-50); /* Professional SaaS background */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid var(--slate-200);
+  overflow-y: auto;
+  overflow-x: hidden;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-card {
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.close {
+  /* display: none removed so the margin-left animation works! */
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--slate-200);
+  margin-bottom: 4px;
+}
+
+.sidebar.close {
+  margin-left: -300px;
+}
+
+/* =========================================
+   SIDEBAR CARDS & FORMS
+========================================= */
+.actions-section {
+  display: flex;
+  flex-direction: column;
+  margin-block: 4px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  flex-direction: row;
+}
+
+.action-buttons button {
+  flex: 1;
+  font-size: clamp(10px, 1.8vw, 12px);
+  padding: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .route-config {
@@ -557,12 +507,16 @@ body,
 }
 
 .route-buttons .clear-route {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   background-color: transparent !important;
   color: var(--red-500) !important;
   border: 1px solid var(--red-500) !important;
   padding: 0 8px !important;
   cursor: pointer;
   transition: all 0.2s ease !important;
+  border-radius: 6px;
 }
 
 .route-buttons .clear-route:hover {
@@ -570,64 +524,18 @@ body,
   color: white !important;
 }
 
-/* This makes the route line look like it's flowing */
-.leaflet-ant-path {
-  stroke-dasharray: 10, 15;
-  animation: leaflet-ant-path-animation 30s linear infinite;
+
+/* Theme Selector UI (Map Layers) */
+.theme-selector {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
 }
 
-@keyframes leaflet-ant-path-animation {
-  from { stroke-dashoffset: 100%; }
-  to { stroke-dashoffset: 0%; }
-}
-
-@media (max-width: 800px) {
-  .sidebar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 85vw;
-    max-width: 320px;
-    z-index: 2000;
-    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
-    transform: translateX(0);
-    display: flex !important; /* Override display:none on mobile */
-  }
-
-  .sidebar.close {
-    transform: translateX(-100%);
-    box-shadow: none;
-  }
-  
-  .modal-content {
-    max-width: 90vw;
-  }
-
-  .modal-title {
-    font-size: 1.1rem;
-  }
-  .close-btn {
-    padding: 4px;
-  }
-  .task-row {
-    gap: 3px;
-  }
-  .config-container {
-    gap: 5px;
-  }
-  .primary-btn, .secondary-btn {
-    padding: 8px;
-  }
-  
-  .mark-done-btn {
-    padding: 4px;
-  }
-}
-
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.spinner { animation: spin 1s linear infinite; }
-
+/* =========================================
+   NAVIGATION DRAWER
+========================================= */
 /* Navigation Drawer */
 .navigation-drawer {
   position: fixed;
@@ -761,81 +669,174 @@ body,
   font-weight: 500;
 }
 
-.mark-done-btn {
-  background: none;
-  border: none;
-  color: var(--emerald-500);
-  cursor: pointer;
+/* =========================================
+   MAP LAYERS & THEME MENU
+========================================= */
+.theme-btn {
+  background: white;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-radius: 4px;
   padding: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  transition: all 0.2s ease;
+}
+
+.theme-btn:hover {
+  background: var(--slate-50);
+}
+
+.theme-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 5px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.theme-menu button {
+  padding: 10px 15px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate-700);
+  transition: background 0.2s ease;
+  white-space: nowrap;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+  gap: 10px;
+}
+
+.theme-menu button:hover {
+  background: var(--slate-100);
+  color: var(--slate-900);
+}
+
+/* =========================================
+   MAP COMPONENT & PIN POPUPS
+========================================= */
+.map-container {
+  flex: 1;
+  position: relative;
+}
+
+/* Active Map Mode Visual Cues */
+.map-add-mode {
+  outline: 4px solid var(--primary);
+  outline-offset: -4px;
+}
+
+.map-add-mode .leaflet-container,
+.map-add-mode .leaflet-interactive {
+  cursor: crosshair !important;
+}
+
+/* This makes the route line look like it's flowing */
+.leaflet-ant-path {
+  stroke-dasharray: 10, 15;
+  animation: leaflet-ant-path-animation 30s linear infinite;
+}
+
+@keyframes leaflet-ant-path-animation {
+  from { stroke-dashoffset: 100%; }
+  to { stroke-dashoffset: 0%; }
+}
+
+.map-wrapper, .map-container-layer {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.locate-me-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: var(--blue-600);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: transform 0.2s ease, background 0.2s ease;
 }
 
-.mark-done-btn:hover {
-  background: rgba(16, 185, 129, 0.1);
-  transform: scale(1);
+.locate-me-btn:hover {
+  background-color: var(--blue-700);
+  transform: translateY(-2px);
 }
 
-@media (max-width: 800px) {
-  .navigation-drawer {
-    width: 70%;
-  }
-  
-  .drawer-header {
-    padding: 10px 14px;
-  }
-  
-  .step-counter {
-    padding: 3px 8px;
-  }
-  
-  .drawer-content {
-    padding: 8px 14px;
-    gap: 8px;
-    max-height: 200px;
-  }
-  
-  .nav-step {
-    padding: 8px 10px;
-    gap: 10px;
-    border-radius: 8px;
-  }
-  
-  .step-icon {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .task-row {
-    gap: 3px;
-  }
-  .config-container {
-    gap: 5px;
-  }
-  .primary-btn, .secondary-btn {
-    padding: 8px;
-  }
+.popup-container {
+  min-width: 150px;
 }
 
-@keyframes spin { 100% { transform: rotate(360deg); } }
-.spinner { animation: spin 1s linear infinite; }
+.popup-title {
+  margin-bottom: 5px; 
+  display: block; 
+  width: 100%;
+}
 
+.popup-type {
+  margin: 2px 0;
+}
+
+.popup-divider {
+  margin: 8px 0;
+}
+
+.popup-actions {
+  display: flex; 
+  justify-content: space-between; 
+  gap: 5px;
+}
+
+.popup-btn {
+  cursor: pointer; 
+  padding: 2px 5px;
+  background: none;
+  border: 1px solid var(--slate-300);
+  border-radius: 4px;
+}
+
+.popup-btn:hover {
+  background: var(--slate-50);
+}
+
+.popup-btn-delete {
+  color: red;
+  border-color: var(--red-300);
+}
+
+.popup-btn-delete:hover {
+  background: var(--red-50);
+}
+
+/* Push Leaflet Zoom Controls right so they don't go off-screen or clash with the Menu Button */
+.leaflet-top.leaflet-left {
+  margin-left: 20px;
+}
+
+/* =========================================
+   SEARCH LOCATION UI
+========================================= */
 /* Search Location Control */
-.search-control-container {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  /* Leaves exactly 70px of breathing room on the left and right */
-  /* This guarantees it will NEVER overlap the Hamburger or Layers buttons */
-  width: calc(100% - 150px); 
-  max-width: 400px;
-}
-
 .search-input-wrapper {
   background: white;
   border: 2px solid rgba(0,0,0,0.2);
@@ -860,6 +861,18 @@ body,
   padding: 4px 8px;
   font-size: clamp(12px, 2vw, 14px);
   color: var(--slate-700);
+}
+
+.search-control-container {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  /* Leaves exactly 70px of breathing room on the left and right */
+  /* This guarantees it will NEVER overlap the Hamburger or Layers buttons */
+  width: calc(100% - 150px); 
+  max-width: 400px;
 }
 
 .search-icon, .loading-icon {
@@ -947,70 +960,53 @@ body,
   opacity: 0.8;
 }
 
-/* Theme Selector UI (Map Layers) */
-.theme-selector {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 1000;
-}
-
-.theme-btn {
-  background: white;
-  border: 2px solid rgba(0,0,0,0.2);
-  border-radius: 4px;
-  padding: 8px;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  display: flex;
-  transition: all 0.2s ease;
-}
-
-.theme-btn:hover {
-  background: var(--slate-50);
-}
-
-.theme-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  margin-top: 5px;
-  background: white;
-  border-radius: 6px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-  display: flex;
-  flex-direction: column;
-  min-width: 140px;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,0.1);
-}
-
-.theme-menu button {
-  padding: 10px 15px;
-  border: none;
-  background: none;
-  text-align: left;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--slate-700);
-  transition: background 0.2s ease;
-  white-space: nowrap;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.theme-menu button:hover {
-  background: var(--slate-100);
-  color: var(--slate-900);
-}
-
 /* =========================================
-   REPLACED INLINE STYLES
+   MODALS
 ========================================= */
-.helper-text-spaced {
-  margin-top: 8px;
+/* The semi-transparent background */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: not-allowed;
+}
+
+.modal-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  width: 350px;
+  max-width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.2s ease-out;
+  cursor: auto;
+}
+
+.modal-title {
+  margin: 0 0 16px 0;
+  font-size: 1.25rem;
+  color: var(--gray-800);
+}
+
+.modal-divider {
+  margin: 20px 0;
+  border: 0;
+  border-top: 1px solid var(--gray-200);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
 }
 
 .modal-label-spaced {
@@ -1018,83 +1014,84 @@ body,
   display: block;
 }
 
-.map-wrapper, .map-container-layer {
-  position: relative;
-  height: 100%;
-  width: 100%;
-}
+/* =========================================
+   MEDIA QUERIES
+========================================= */
+@media (max-width: 800px) {
+  .sidebar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 85vw;
+    max-width: 320px;
+    z-index: 2000;
+    box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
+    transform: translateX(0);
+    display: flex !important; /* Override display:none on mobile */
+  }
 
-.locate-me-btn {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  z-index: 1000;
-  background-color: var(--blue-600);
-  color: white;
-  padding: 10px 16px;
-  border-radius: 50px;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  transition: transform 0.2s ease, background 0.2s ease;
-}
+  .sidebar.close {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+  
+  .modal-content {
+    max-width: 90vw;
+  }
 
-.locate-me-btn:hover {
-  background-color: var(--blue-700);
-  transform: translateY(-2px);
-}
+  .modal-title {
+    font-size: 1.1rem;
+  }
+  .close-btn {
+    padding: 4px;
+  }
+  .task-row {
+    gap: 3px;
+  }
+  .config-container {
+    gap: 5px;
+  }
+  .primary-btn, .secondary-btn {
+    padding: 8px;
+  }
+  
+  .mark-done-btn {
+    padding: 4px;
+  }
 
-.popup-container {
-  min-width: 150px;
-}
-
-.popup-title {
-  margin-bottom: 5px; 
-  display: block; 
-  width: 100%;
-}
-
-.popup-type {
-  margin: 2px 0;
-}
-
-.popup-divider {
-  margin: 8px 0;
-}
-
-.popup-actions {
-  display: flex; 
-  justify-content: space-between; 
-  gap: 5px;
-}
-
-.popup-btn {
-  cursor: pointer; 
-  padding: 2px 5px;
-  background: none;
-  border: 1px solid var(--slate-300);
-  border-radius: 4px;
-}
-
-.popup-btn:hover {
-  background: var(--slate-50);
-}
-
-.popup-btn-delete {
-  color: red;
-  border-color: var(--red-300);
-}
-
-.popup-btn-delete:hover {
-  background: var(--red-50);
+  .navigation-drawer {
+    width: 70%;
+  }
+  
+  .drawer-header {
+    padding: 10px 14px;
+  }
+  
+  .step-counter {
+    padding: 3px 8px;
+  }
+  
+  .drawer-content {
+    padding: 8px 14px;
+    gap: 8px;
+    max-height: 200px;
+  }
+  
+  .nav-step {
+    padding: 8px 10px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+  
+  .step-icon {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 /* =========================================
-   GLOBAL DARK THEME SYNC
+   DARK THEME (GLOBAL OVERRIDES)
 ========================================= */
 .dark-theme {
   color-scheme: dark;
@@ -1209,7 +1206,6 @@ body,
 /* Dark Theme overrides for Search Control */
 .dark-theme .search-input-wrapper {
   background: var(--dark-bg);
-  border-color: var(--dark-surface-hover);
 }
 
 .dark-theme .search-input-wrapper input {
@@ -1259,10 +1255,4 @@ body,
 .dark-theme .close-btn:hover {
   background-color: rgba(239, 68, 68, 0.2);
   color: var(--red-500);
-}
-
-
-/* Push Leaflet Zoom Controls right so they don't go off-screen or clash with the Menu Button */
-.leaflet-top.leaflet-left {
-  margin-left: 20px;
 }
