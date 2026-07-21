@@ -215,7 +215,7 @@ body,
 }
 
 .close {
-  display: none;
+  /* display: none removed so the margin-left animation works! */
 }
 
 .sidebar-header {
@@ -265,20 +265,43 @@ body,
 
 .sidebar {
   width: 280px;
-  transition: transform 0.3s ease;
+  min-width: 280px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar.close {
-  transform: translateX(-100%);
+  margin-left: -320px;
 }
 
+/* Push Leaflet Zoom Controls down so they don't clash with the Search Bar */
+.leaflet-top.leaflet-left {
+  margin-top: 70px;
+}
+
+/* Redesigned as a vertical left-centered pull tab */
 .open-btn {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  bottom: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0; /* Sticks exactly to the left edge */
   z-index: 1000;
-  padding: 7px;
+  padding: 12px 6px; /* Taller padding */
+  background: white;
+  border: 1px solid rgba(0,0,0,0.2);
+  border-left: none; /* No border on the flush edge */
+  border-radius: 0 8px 8px 0; /* Rounded right side */
+  box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, padding 0.2s ease;
+  color: black;
+}
+
+.open-btn:hover {
+  background: #f8fafc;
+  padding-left: 10px; /* Slight pull effect on hover */
 }
 
 /* The semi-transparent background */
@@ -887,7 +910,7 @@ body,
 }
 
 .nav-step.current .step-details p {
-  color: #8f0edf;
+  color: #e8e3ea;
   font-weight: 500;
 }
 
