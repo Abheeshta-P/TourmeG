@@ -202,7 +202,7 @@ function App() {
               <p className="helper-text">Smart Router • Mangaluru Region</p>
             </div>
           </div>
-          <button className="close-btn" onClick={() => setSideBar(false)}>
+          <button className="close-btn" title="Close Sidebar" onClick={() => setSideBar(false)}>
             <X size={16} />
           </button>
         </div>
@@ -338,7 +338,7 @@ function App() {
 
       {/* Open sidebar button */}
       {!sidebar && (
-        <button className="open-btn" onClick={() => setSideBar(true)}>
+        <button className="open-btn" onClick={() => setSideBar(true)} title="Open Sidebar">
           <Menu size={22} />
         </button>
       )}
