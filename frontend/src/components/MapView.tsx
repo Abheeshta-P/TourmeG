@@ -14,6 +14,7 @@ import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { LocateFixed, Layers, Map, Moon, Globe, LayoutTemplate } from "lucide-react";
 import { storage, type MapTheme } from "../utils/storageUtils";
+import SearchControl from "./SearchControl";
 
 // Fix for React-Leaflet icons not showing up in Vite production builds
 // @ts-ignore
@@ -496,6 +497,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
           visitOrder={visitOrder}
           handleClearAllRouteData={handleClearAllRouteData}
         />
+        <SearchControl />
       </MapContainer>
     </div>
   );
