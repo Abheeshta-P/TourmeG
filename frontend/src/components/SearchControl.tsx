@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Search, MapPin, Loader2 } from "lucide-react";
+import { Search, MapPin, Loader2, X } from "lucide-react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
 
@@ -95,6 +95,19 @@ export default function SearchControl() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => { if(results.length > 0) setShowDropdown(true); }}
         />
+        {query && (
+          <button 
+            className="clear-search-btn"
+            onClick={() => {
+              setQuery("");
+              setResults([]);
+              setShowDropdown(false);
+            }}
+            title="Clear search"
+          >
+            <X size={16} />
+          </button>
+        )}
         {isLoading && <Loader2 className="spinner loading-icon" />}
       </div>
       

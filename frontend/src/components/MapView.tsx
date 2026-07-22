@@ -423,7 +423,7 @@ export default function MapView({ addMode, routePath, visitOrder, handleClearAll
           onClick={() => setShowThemeMenu(!showThemeMenu)}
           title="Map Layers"
         >
-          <Layers size={20} color="#334155" />
+          <Layers size={20} />
         </button>
         {showThemeMenu && (
           <div className="theme-menu">
