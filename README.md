@@ -10,7 +10,11 @@
 * **Dynamic Effort Scoring**: Assign tasks (e.g., Eating, Sightseeing) to locations. The route recalculates based on a "Workload Weight" that balances travel distance with task effort.
 * **Global vs. Local Configuration**: A reactive sidebar sets default tasks globally, while per-node modals allow for specific overrides.
 * **OSM Road Snapping**: Automatically "snaps" user-clicked points to the nearest real road node from OpenStreetMap (OSM) data to ensure valid routing.
-* **Backend Path Caching**: The Java backend caches A* results to minimize redundant computations across the  distance matrix.
+* **Nominatim Location Search**: A built-in search engine powered by OpenStreetMap to instantly find and fly to any address or landmark globally.
+* **Interactive Navigation Drawer**: A responsive bottom-sheet UI that provides turn-by-turn guidance and dynamically tracks GPS progression.
+* **Multi-Layer Theme Engine**: Swap between Standard, Minimal, Satellite, and a high-contrast Semantic Dark Mode seamlessly, with preferences saved locally.
+* **Installable PWA**: TourmeG is configured as a fully installable Progressive Web App (PWA) offering a native mobile experience and flawless viewport scaling on all devices.
+* **Backend Path Caching**: The Java backend caches A* results to minimize redundant computations across the distance matrix.
 
 
 ## Tech Stack
